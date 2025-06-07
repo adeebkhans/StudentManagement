@@ -146,7 +146,8 @@ exports.deleteStudent = async (req, res) => {
                 data: null
             });
         }
-        const student = await Student.findByIdAndDelete(id);
+
+        const student = await Student.findById(id);
         if (!student) {
             return res.status(404).json({
                 success: false,
@@ -154,9 +155,24 @@ exports.deleteStudent = async (req, res) => {
                 data: null
             });
         }
+
+        // Delete Aadhaar image from Cloudinary if exists
+        if (student.aadharImage && student.aadharImage.public_id) {
+            try {
+                await cloudinary.uploader.destroy(student.aadharImage.public_id, {
+                    resource_type: "image",
+                    type: "authenticated"
+                });
+            } catch (cloudErr) {
+                console.error("Cloudinary delete error:", cloudErr);
+            }
+        }
+
+        await Student.findByIdAndDelete(id);
+
         res.status(200).json({
             success: true,
-            message: "Student deleted successfully",
+            message: "Student and associated Aadhaar image deleted successfully",
             data: null
         });
     } catch (err) {
