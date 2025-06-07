@@ -108,9 +108,14 @@ exports.updateStudent = async (req, res) => {
                 data: null
             });
         }
+
+        // Prevent updating aadharImage field
+        const updateData = { ...req.body };
+        delete updateData.aadharImage;
+
         const student = await Student.findByIdAndUpdate(
             id,
-            req.body,
+            updateData,
             { new: true, runValidators: true }
         );
         if (!student) {
@@ -194,6 +199,15 @@ exports.uploadAadhaar = async (req, res) => {
 
         const { id } = req.params;
 
+        // Check if student already has an Aadhaar image
+        const student = await Student.findById(id);
+        if (!student) {
+            return res.status(404).json({ success: false, message: "Student not found", data: null });
+        }
+        if (student.aadharImage && student.aadharImage.public_id) {
+            return res.status(400).json({ success: false, message: "Aadhaar image already uploaded", data: null });
+        }
+
         // Upload to Cloudinary using upload_stream
         const streamUpload = () => {
             return new Promise((resolve, reject) => {
@@ -215,7 +229,7 @@ exports.uploadAadhaar = async (req, res) => {
         const result = await streamUpload();
 
         // Save public_id and secure_url in student record
-        const student = await Student.findByIdAndUpdate(
+        const updatedStudent = await Student.findByIdAndUpdate(
             id,
             {
                 aadharImage: {
@@ -232,7 +246,7 @@ exports.uploadAadhaar = async (req, res) => {
             data: {
                 public_id: result.public_id,
                 secure_url: result.secure_url,
-                student
+                student: updatedStudent
             }
         });
     } catch (err) {
