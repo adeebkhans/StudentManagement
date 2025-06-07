@@ -1,4 +1,5 @@
 const Fee = require('../Schemas/FeeSchema');
+const StudentSchema = require('../Schemas/StudentSchema');
 
 // Create a new fee record
 exports.createFee = async (req, res) => {
@@ -112,6 +113,35 @@ exports.getFeesByStudentId = async (req, res) => {
         });
     }
 };
+
+exports.getNewStudentsWithNoFeeRecords = async (req, res) => {
+    try {
+        // Fetch all students
+        const students = await StudentSchema.find();
+
+        // Fetch all fee records
+        const fees = await Fee.find().select('student').lean();
+
+        // Extract student IDs from fee records
+        const feeStudentIds = new Set(fees.map(fee => fee.student.toString()));
+
+        // Filter students who do not have any fee records
+        const newStudentsWithNoFees = students.filter(student => !feeStudentIds.has(student._id.toString()));
+
+        res.status(200).json({
+            success: true,
+            message: "New students with no fee records fetched successfully",
+            data: newStudentsWithNoFees
+        });
+    } catch (err) {
+        console.error("Get new students with no fee records error:", err);
+        res.status(500).json({
+            success: false,
+            message: err.message || "Failed to fetch new students with no fee records",
+            data: null
+        });
+    }
+}
 
 // Update a fee record by ID
 exports.updateFee = async (req, res) => {

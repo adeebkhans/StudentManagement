@@ -9,6 +9,9 @@ router.post('/', AuthMiddleware, FeeController.createFee);
 // Get all fee records
 router.get('/', AuthMiddleware, FeeController.getAllFees);
 
+// Get all students with no fee records
+router.get('/newstudents', AuthMiddleware, FeeController.getNewStudentsWithNoFeeRecords);
+
 // Get a fee record by ID
 router.get('/:id', AuthMiddleware, FeeController.getFeeById);
 
