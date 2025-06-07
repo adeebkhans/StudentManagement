@@ -1,0 +1,535 @@
+{
+	"info": {
+		"_postman_id": "80ca1bdf-fc1d-4217-8573-1ed012f4154a",
+		"name": "SSIP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "37975600",
+		"_collection_link": "https://personal-team-4284.postman.co/workspace/Student-Management~e39b18ca-e93b-4141-986c-4b12e2441626/collection/37975600-80ca1bdf-fc1d-4217-8573-1ed012f4154a?action=share&source=collection_link&creator=37975600"
+	},
+	"item": [
+		{
+			"name": "Manager",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"email\": \"xyz@zyx.co.in\",\n  \"password\": \"ayssdf\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/auth/login",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Student",
+			"item": [
+				{
+					"name": "Add student",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Lates\",\n  \"fathername\": \"Richard Doe\",\n  \"mothername\": \"Jane Doe\",\n  \"studentMob\": \"9876543210\",\n  \"parentsMob\": \"9123456780\",\n  \"aadharcard\": \"123412341234\",\n  \"enrollment\": \"ENR12345\"\n//   \"course\": \"BSc\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/students",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Upload Aadhar Image",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "aadhar",
+									"type": "file",
+									"src": "/C:/Users/asus/Downloads/A_sample_of_Aadhaar_card.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{localhost}}/students/684424583952cef0a73af86c/aadhar",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"students",
+								"684424583952cef0a73af86c",
+								"aadhar"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Export Student data",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"url": {
+							"raw": "{{localhost}}/students/export",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"students",
+								"export"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all students",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"url": {
+							"raw": "{{localhost}}/students",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"students"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get students by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"url": {
+							"raw": "{{localhost}}/students/68440d3a854453ef0f43da44",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"students",
+								"68440d3a854453ef0f43da44"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update student by id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Name\",\n    \"fathername\": \"Richard Doe\",\n    \"mothername\": \"Jane Doe\",\n    \"studentMob\": \"9876543210\",\n    \"parentsMob\": \"9123456780\",\n    \"aadharcard\": \"123412341234\",\n    \"enrollment\": \"ENR12345\"\n    //   \"course\": \"BSc\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3009/api/v1/students/68440af133b495935ac19e68",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3009",
+							"path": [
+								"api",
+								"v1",
+								"students",
+								"68440af133b495935ac19e68"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Student By id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer YOUR_JWT_TOKEN"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3009/api/v1/students/684424583952cef0a73af86c",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3009",
+							"path": [
+								"api",
+								"v1",
+								"students",
+								"684424583952cef0a73af86c"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Fee",
+			"item": [
+				{
+					"name": "Create fee",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"student\": \"6844100f12ee1b4bf7d5ad7e\",\n  \"code\": \"A\",\n  \"fee\": 180000,\n  \"deposited\": 5000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/fees",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get all fee record",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/fees",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"fees"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get fee record by fee id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/fees/6844102412ee1b4bf7d5ad80",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"fees",
+								"6844102412ee1b4bf7d5ad80"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get fee record by student id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/fees/student/6844100f12ee1b4bf7d5ad7e",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"fees",
+								"student",
+								"6844100f12ee1b4bf7d5ad7e"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update fee record by fee id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"newDeposit\": 6000\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{localhost}}/fees/6844102412ee1b4bf7d5ad80",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"fees",
+								"6844102412ee1b4bf7d5ad80"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete fee by fee id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{managertoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{localhost}}/fees/6844102412ee1b4bf7d5ad80",
+							"host": [
+								"{{localhost}}"
+							],
+							"path": [
+								"fees",
+								"6844102412ee1b4bf7d5ad80"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
