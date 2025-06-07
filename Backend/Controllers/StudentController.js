@@ -1,0 +1,283 @@
+const { cloudinary, getSignedAadhaarUrl } = require('../Utils/Cloudinary');
+const Student = require('../Schemas/StudentSchema');
+const fs = require('fs');
+const ExcelJS = require('exceljs');
+
+// Create a new student
+exports.createStudent = async (req, res) => {
+    try {
+        const { name, fathername, mothername, studentMob, parentsMob } = req.body;
+
+        // Basic validation
+        if (!name || !fathername || !mothername || !studentMob || !parentsMob) {
+            return res.status(400).json({
+                success: false,
+                message: "Missing required fields",
+                data: null
+            });
+        }
+
+        const student = new Student(req.body);
+        await student.save();
+        res.status(201).json({
+            success: true,
+            message: "Student created successfully",
+            data: student
+        });
+    } catch (err) {
+        console.error("Create student error:", err);
+        res.status(400).json({
+            success: false,
+            message: err.message || "Failed to create student",
+            data: null
+        });
+    }
+};
+
+// Get all students
+exports.getAllStudents = async (req, res) => {
+    try {
+        const students = await Student.find();
+        res.status(200).json({
+            success: true,
+            message: "Students fetched successfully",
+            data: students
+        });
+    } catch (err) {
+        console.error("Get all students error:", err);
+        res.status(500).json({
+            success: false,
+            message: err.message || "Failed to fetch students",
+            data: null
+        });
+    }
+};
+
+// Get a student by ID
+exports.getStudentById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid student ID format",
+                data: null
+            });
+        }
+        const student = await Student.findById(id);
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: "Student not found",
+                data: null
+            });
+        }
+
+        // // Generate Aadhaar signed URL if Aadhaar image exists
+        // let aadhaarSignedUrl = null;
+        // if (student.aadharImage && student.aadharImage.public_id) {
+        //     aadhaarSignedUrl = await getSignedAadhaarUrl(student.aadharImage.public_id);
+        // }
+
+        res.status(200).json({
+            success: true,
+            message: "Student fetched successfully",
+            data: {
+                ...student.toObject(),
+                // aadhaarSignedUrl
+            }
+        });
+    } catch (err) {
+        console.error("Get student by ID error:", err);
+        res.status(500).json({
+            success: false,
+            message: err.message || "Failed to fetch student",
+            data: null
+        });
+    }
+};
+
+// Update a student by ID
+exports.updateStudent = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid student ID format",
+                data: null
+            });
+        }
+        const student = await Student.findByIdAndUpdate(
+            id,
+            req.body,
+            { new: true, runValidators: true }
+        );
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: "Student not found",
+                data: null
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Student updated successfully",
+            data: student
+        });
+    } catch (err) {
+        console.error("Update student error:", err);
+        res.status(400).json({
+            success: false,
+            message: err.message || "Failed to update student",
+            data: null
+        });
+    }
+};
+
+// Delete a student by ID
+exports.deleteStudent = async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid student ID format",
+                data: null
+            });
+        }
+        const student = await Student.findByIdAndDelete(id);
+        if (!student) {
+            return res.status(404).json({
+                success: false,
+                message: "Student not found",
+                data: null
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Student deleted successfully",
+            data: null
+        });
+    } catch (err) {
+        console.error("Delete student error:", err);
+        res.status(500).json({
+            success: false,
+            message: err.message || "Failed to delete student",
+            data: null
+        });
+    }
+};
+
+// Aadhaar image upload
+exports.uploadAadhaar = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: "No file uploaded", data: null });
+        }
+
+        const { id } = req.params;
+
+        // Upload to Cloudinary using upload_stream
+        const streamUpload = () => {
+            return new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    {
+                        folder: "aadhaar",
+                        access_mode: "authenticated",
+                        resource_type: "image"
+                    },
+                    (error, result) => {
+                        if (result) resolve(result);
+                        else reject(error);
+                    }
+                );
+                stream.end(req.file.buffer);
+            });
+        };
+
+        const result = await streamUpload();
+
+        // Save public_id and secure_url in student record
+        const student = await Student.findByIdAndUpdate(
+            id,
+            {
+                aadharImage: {
+                    public_id: result.public_id,
+                    secure_url: result.secure_url
+                }
+            },
+            { new: true }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Aadhaar image uploaded successfully",
+            data: {
+                public_id: result.public_id,
+                secure_url: result.secure_url,
+                student
+            }
+        });
+    } catch (err) {
+        console.error("Aadhaar upload error:", err);
+        res.status(500).json({ success: false, message: err.message, data: null });
+    }
+};
+
+// Export all students to Excel
+exports.exportStudents = async (req, res) => {
+    try {
+        const students = await Student.find();
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Students');
+
+        // Define columns
+        worksheet.columns = [
+            { header: 'Name', key: 'name', width: 20 },
+            { header: 'Father Name', key: 'fathername', width: 20 },
+            { header: 'Mother Name', key: 'mothername', width: 20 },
+            { header: 'Student Mobile', key: 'studentMob', width: 15 },
+            { header: 'Parents Mobile', key: 'parentsMob', width: 15 },
+            { header: 'Aadhar Card', key: 'aadharcard', width: 20 },
+            { header: 'Enrollment', key: 'enrollment', width: 20 },
+            { header: 'Course', key: 'course', width: 20 }
+        ];
+
+        // Add rows
+        students.forEach(student => {
+            worksheet.addRow({
+                name: student.name,
+                fathername: student.fathername,
+                mothername: student.mothername,
+                studentMob: student.studentMob,
+                parentsMob: student.parentsMob,
+                aadharcard: student.aadharcard,
+                enrollment: student.enrollment,
+                course: student.course
+            });
+        });
+
+        // Set response headers
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=students.xlsx'
+        );
+
+        // Write workbook to response
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (err) {
+        console.error("Export students error:", err);
+        res.status(500).json({
+            success: false,
+            message: err.message || "Failed to export students",
+            data: null
+        });
+    }
+};
