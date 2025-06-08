@@ -1,4 +1,6 @@
 const Fee = require('../Schemas/FeeSchema');
+const StudentSchema = require('../Schemas/StudentSchema');
+const ExcelJS = require('exceljs');
 
 // Create a new fee record
 exports.createFee = async (req, res) => {
@@ -113,6 +115,35 @@ exports.getFeesByStudentId = async (req, res) => {
     }
 };
 
+exports.getNewStudentsWithNoFeeRecords = async (req, res) => {
+    try {
+        // Fetch all students
+        const students = await StudentSchema.find();
+
+        // Fetch all fee records
+        const fees = await Fee.find().select('student').lean();
+
+        // Extract student IDs from fee records
+        const feeStudentIds = new Set(fees.map(fee => fee.student.toString()));
+
+        // Filter students who do not have any fee records
+        const newStudentsWithNoFees = students.filter(student => !feeStudentIds.has(student._id.toString()));
+
+        res.status(200).json({
+            success: true,
+            message: "New students with no fee records fetched successfully",
+            data: newStudentsWithNoFees
+        });
+    } catch (err) {
+        console.error("Get new students with no fee records error:", err);
+        res.status(500).json({
+            success: false,
+            message: err.message || "Failed to fetch new students with no fee records",
+            data: null
+        });
+    }
+}
+
 // Update a fee record by ID
 exports.updateFee = async (req, res) => {
     try {
@@ -196,6 +227,63 @@ exports.deleteFee = async (req, res) => {
         res.status(500).json({
             success: false,
             message: err.message || "Failed to delete fee record",
+            data: null
+        });
+    }
+};
+
+// Export all fee records to Excel
+exports.exportFees = async (req, res) => {
+    try {
+        const fees = await Fee.find().populate('student');
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Fees');
+
+        // Define columns
+        worksheet.columns = [
+            { header: "Student Name", key: "studentName", width: 20 },
+            { header: "Father's Name", key: "fatherName", width: 20 },
+            { header: "Enrollment", key: "enrollment", width: 18 },
+            { header: "Fee Code", key: "code", width: 12 },
+            { header: "Total Fee", key: "fee", width: 14 },
+            { header: "Deposited", key: "deposited", width: 14 },
+            { header: "Remaining", key: "remaining", width: 14 },
+            { header: "updatedAt", key: "updatedAt", width: 22 },
+        ];
+
+        // Add rows
+        fees.forEach(fee => {
+            worksheet.addRow({
+                studentName: fee.student?.name || "N/A",
+                fatherName: fee.student?.fathername || "N/A",
+                enrollment: fee.student?.enrollment || "N/A",
+                code: fee.code,
+                fee: fee.fee,
+                deposited: fee.deposited,
+                remaining: fee.remaining,
+                updatedAt: fee.updatedAt ? new Date(fee.updatedAt).toLocaleString() : "",
+            });
+        });
+
+        // Set response headers
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        res.setHeader(
+            'Content-Disposition',
+            'attachment; filename=fees.xlsx'
+        );
+
+        // Write workbook to response
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (err) {
+        console.error("Export fees error:", err);
+        res.status(500).json({
+            success: false,
+            message: err.message || "Failed to export fees",
             data: null
         });
     }

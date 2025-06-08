@@ -270,23 +270,38 @@ exports.exportStudents = async (req, res) => {
             { header: 'Mother Name', key: 'mothername', width: 20 },
             { header: 'Student Mobile', key: 'studentMob', width: 15 },
             { header: 'Parents Mobile', key: 'parentsMob', width: 15 },
-            { header: 'Aadhar Card', key: 'aadharcard', width: 20 },
             { header: 'Enrollment', key: 'enrollment', width: 20 },
-            { header: 'Course', key: 'course', width: 20 }
+            { header: 'Aadhar Card', key: 'aadharcard', width: 20 },
+            { header: 'Aadhaar Image', key: 'aadharImage', width: 30 },
+            { header: 'Course', key: 'course', width: 20 },
         ];
 
         // Add rows
         students.forEach(student => {
-            worksheet.addRow({
+            const aadhaarUrl = student.aadharImage && student.aadharImage.secure_url
+                ? student.aadharImage.secure_url
+                : null;
+            const row = worksheet.addRow({
                 name: student.name,
                 fathername: student.fathername,
                 mothername: student.mothername,
                 studentMob: student.studentMob,
                 parentsMob: student.parentsMob,
                 aadharcard: student.aadharcard,
-                enrollment: student.enrollment,
-                course: student.course
+                enrollment: student.enrollment || 'N/A',
+                aadharImage: aadhaarUrl ? 'View Aadhaar' : 'N/A',
+                course: student.course || 'N/A'
             });
+
+            // If Aadhaar URL exists, set hyperlink
+            if (aadhaarUrl) {
+                row.getCell('aadharImage').value = {
+                    text: 'View Aadhaar',
+                    hyperlink: aadhaarUrl
+                };
+                // Optional: style hyperlink
+                row.getCell('aadharImage').font = { color: { argb: 'FF0000FF' }, underline: true };
+            }
         });
 
         // Set response headers

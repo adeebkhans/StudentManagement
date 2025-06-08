@@ -9,11 +9,17 @@ router.post('/', AuthMiddleware, FeeController.createFee);
 // Get all fee records
 router.get('/', AuthMiddleware, FeeController.getAllFees);
 
-// Get a fee record by ID
-router.get('/:id', AuthMiddleware, FeeController.getFeeById);
+// Get all students with no fee records
+router.get('/newstudents', AuthMiddleware, FeeController.getNewStudentsWithNoFeeRecords);
 
 // Get all fee records for a specific student
 router.get('/student/:studentId', AuthMiddleware, FeeController.getFeesByStudentId);
+
+// Export all fee records to Excel
+router.get('/export', AuthMiddleware, FeeController.exportFees);
+
+// Get a fee record by ID
+router.get('/:id', AuthMiddleware, FeeController.getFeeById);
 
 // Update a fee record by ID
 router.put('/:id', AuthMiddleware, FeeController.updateFee);

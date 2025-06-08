@@ -1,0 +1,86 @@
+import axios from "axios";
+
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3009/api/v1";
+
+// Helper to get auth token
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
+
+// Create a new fee record
+export const createFee = async (feeData) => {
+  const res = await axios.post(
+    `${BASE_URL}/fees`,
+    feeData,
+    { headers: { ...getAuthHeader() } }
+  );
+  return res.data;
+};
+
+// Get all fee records
+export const getAllFees = async () => {
+  const res = await axios.get(
+    `${BASE_URL}/fees`,
+    { headers: { ...getAuthHeader() } }
+  );
+  return res.data;
+};
+
+// Get a fee record by ID
+export const getFeeById = async (id) => {
+  const res = await axios.get(
+    `${BASE_URL}/fees/${id}`,
+    { headers: { ...getAuthHeader() } }
+  );
+  return res.data;
+};
+
+// Get all fee records for a specific student
+export const getFeesByStudentId = async (studentId) => {
+  const res = await axios.get(
+    `${BASE_URL}/fees/student/${studentId}`,
+    { headers: { ...getAuthHeader() } }
+  );
+  return res.data;
+};
+
+// Update a fee record by ID
+export const updateFee = async (id, updateData) => {
+  const res = await axios.put(
+    `${BASE_URL}/fees/${id}`,
+    updateData,
+    { headers: { ...getAuthHeader() } }
+  );
+  return res.data;
+};
+
+// Delete a fee record by ID
+export const deleteFee = async (id) => {
+  const res = await axios.delete(
+    `${BASE_URL}/fees/${id}`,
+    { headers: { ...getAuthHeader() } }
+  );
+  return res.data;
+};
+
+// Get all students with no fee records
+export const getNewStudentsWithNoFeeRecords = async () => {
+  const res = await axios.get(
+    `${BASE_URL}/fees/newstudents`,
+    { headers: { ...getAuthHeader() } }
+  );
+  return res.data;
+};
+
+// Export fees to Excel
+export const exportFees = async () => {
+  const res = await axios.get(
+    `${BASE_URL}/fees/export`,
+    {
+      headers: { ...getAuthHeader() },
+      responseType: "blob"
+    }
+  );
+  return res.data; // This will be a Blob (Excel file)
+};
