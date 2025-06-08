@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { login } from "../api/auth";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +16,10 @@ const Login = () => {
       const data = await login(email, password);
       if (data.token) {
         localStorage.setItem("token", data.token);
-        window.location.href = "/"; // Redirect to dashboard or home
+        toast.success("Login successful!");
+        setTimeout(() => {
+          window.location.href = "/";
+        }, 800);
       } else {
         setError(data.message || "Login failed");
       }
