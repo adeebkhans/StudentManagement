@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { getNewStudentsWithNoFeeRecords, getAllFees, updateFee as updateFeeApi, exportFees } from "../api/fees";
 import FeeTable from "../components/FeeTable";
 import FeeForm from "../components/FeeForm";
+import NewFee from "../components/NewFee";
 import Navbar from "../components/Navbar";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -131,7 +132,7 @@ const Fees = () => {
                         onClick={handleShowExistingFees}
                         disabled={loading}
                     >
-                        {loading && view === "existing" ? "Loading..." : "Get All Existing Students Fee"}
+                        {loading && view === "existing" ? "Loading..." : "Update or Get All Existing Students Fee"}
                     </button>
                 </div>
 
@@ -156,36 +157,8 @@ const Fees = () => {
                                 onSuccess={handleFeeFormSuccess}
                                 onCancel={handleFeeFormCancel}
                             />
-                        ) : newStudents.length === 0 ? (
-                            <div className="text-gray-500">No new students found.</div>
                         ) : (
-                            <table className="min-w-full">
-                                <thead>
-                                    <tr>
-                                        <th className="px-4 py-2 border">Name</th>
-                                        <th className="px-4 py-2 border">Father's Name</th>
-                                        <th className="px-4 py-2 border">Enrollment</th>
-                                        <th className="px-4 py-2 border">Action</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {newStudents.map((student) => (
-                                        <tr key={student._id}>
-                                            <td className="px-4 py-2 border">{student.name}</td>
-                                            <td className="px-4 py-2 border">{student.fathername}</td>
-                                            <td className="px-4 py-2 border">{student.enrollment}</td>
-                                            <td className="px-4 py-2 border">
-                                                <button
-                                                    className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
-                                                    onClick={() => handleCreateFee(student)}
-                                                >
-                                                    Create Fee
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                            <NewFee students={newStudents} onCreateFee={handleCreateFee} />
                         )}
                     </div>
                 )}
@@ -228,59 +201,25 @@ const Fees = () => {
                                 </div>
                             </form>
                         ) : null}
-                        <table className="min-w-full">
-                            <thead>
-                                <tr>
-                                    <th className="px-4 py-2 border">Student Name</th>
-                                    <th className="px-4 py-2 border">Father's Name</th>
-                                    <th className="px-4 py-2 border">Enrollment</th>
-                                    <th className="px-4 py-2 border">Fee Code</th>
-                                    <th className="px-4 py-2 border">Total Fee</th>
-                                    <th className="px-4 py-2 border">Deposited</th>
-                                    <th className="px-4 py-2 border">Remaining</th>
-                                    <th className="px-4 py-2 border">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {fees.length === 0 ? (
-                                    <tr>
-                                        <td colSpan={8} className="text-center py-4">
-                                            No fee records found.
-                                        </td>
-                                    </tr>
-                                ) : (
-                                    fees.map((fee) => (
-                                        <tr key={fee._id}>
-                                            <td className="px-4 py-2 border">{fee.student?.name || "N/A"}</td>
-                                            <td className="px-4 py-2 border">{fee.student?.fathername || "N/A"}</td>
-                                            <td className="px-4 py-2 border">{fee.student?.enrollment || "N/A"}</td>
-                                            <td className="px-4 py-2 border">{fee.code || "N/A"}</td>
-                                            <td className="px-4 py-2 border">{fee.fee ?? "N/A"}</td>
-                                            <td className="px-4 py-2 border">{fee.deposited ?? "N/A"}</td>
-                                            <td className="px-4 py-2 border">
-                                                {typeof fee.fee === "number" && typeof fee.deposited === "number"
-                                                    ? fee.fee - fee.deposited
-                                                    : "N/A"}
-                                            </td>
-                                            <td className="px-4 py-2 border flex gap-2">
-                                                <button
-                                                    className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
-                                                    onClick={() => handleUpdateDeposited(fee)}
-                                                >
-                                                    Add Installment
-                                                </button>
-                                                <button
-                                                    className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
-                                                    onClick={() => navigate(`/fee/${fee._id}`)}
-                                                >
-                                                    View Fee
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))
-                                )}
-                            </tbody>
-                        </table>
+                        <FeeTable
+                            fees={fees}
+                            onAction={(fee) => (
+                                <>
+                                    <button
+                                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
+                                        onClick={() => handleUpdateDeposited(fee)}
+                                    >
+                                        Add Installment
+                                    </button>
+                                    <button
+                                        className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition"
+                                        onClick={() => navigate(`/fee/${fee._id}`)}
+                                    >
+                                        View Fee
+                                    </button>
+                                </>
+                            )}
+                        />
                     </div>
                 )}
             </div>
