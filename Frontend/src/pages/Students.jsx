@@ -154,6 +154,7 @@ const Students = () => {
                         <StudentForm
                             onSubmit={handleFormSubmit}
                             loading={formLoading}
+                            readOnly
                         />
                         <button
                             className="mt-4 text-sm text-blue-600 underline"

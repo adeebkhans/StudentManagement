@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
-const StudentTable = ({ students, onUpdate }) => {
+const StudentTable = ({ students, onUpdate, readOnly }) => {
   const navigate = useNavigate();
 
   return (
@@ -64,12 +64,14 @@ const StudentTable = ({ students, onUpdate }) => {
                 </td>
                 <td className="px-4 py-2 border">
                   <div className="flex gap-2 justify-center">
-                    <button
-                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
-                      onClick={() => onUpdate(student)}
-                    >
-                      Update
-                    </button>
+                    {!readOnly && (
+                      <button
+                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
+                        onClick={() => onUpdate(student)}
+                      >
+                        Update
+                      </button>
+                    )}
                     <button
                       className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
                       onClick={() => navigate(`/student/${student._id}`)}
