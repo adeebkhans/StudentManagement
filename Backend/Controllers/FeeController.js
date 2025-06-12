@@ -5,9 +5,10 @@ const ExcelJS = require('exceljs');
 // Create a new fee record
 exports.createFee = async (req, res) => {
     try {
-        const { student, code, fee, deposited } = req.body;
+        const { student, code, fee, deposited, session } = req.body;
 
-        if (!student || !code || fee == null || deposited == null) {
+        // Check for required fields including session
+        if (!student || !code || fee == null || deposited == null || !session) {
             return res.status(400).json({
                 success: false,
                 message: "Missing required fields",
@@ -15,10 +16,20 @@ exports.createFee = async (req, res) => {
             });
         }
 
+        // Check if fee already exists for the same student and session
+        const existingFee = await Fee.findOne({ student, session });
+        if (existingFee) {
+            return res.status(409).json({
+                success: false,
+                message: "Fee record already exists for this student and session. Use Update",
+                data: null
+            });
+        }
+
         // Calculate remaining internally
         const remaining = fee - deposited;
 
-        const newFee = new Fee({ student, code, fee, deposited, remaining });
+        const newFee = new Fee({ student, code, fee, deposited, remaining, session });
         await newFee.save();
 
         res.status(201).json({
@@ -121,7 +132,8 @@ exports.getNewStudentsWithNoFeeRecords = async (req, res) => {
         const students = await StudentSchema.find();
 
         // Fetch all fee records
-        const fees = await Fee.find().select('student').lean();
+        const fees = await Fee.find().select('student')
+        .lean();
 
         // Extract student IDs from fee records
         const feeStudentIds = new Set(fees.map(fee => fee.student.toString()));

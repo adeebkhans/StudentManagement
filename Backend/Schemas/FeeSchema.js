@@ -10,6 +10,10 @@ const FeeSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    session: {
+        type: String,
+        required: true
+    },
     fee: {
         type: Number,
         required: true
