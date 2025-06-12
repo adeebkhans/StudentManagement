@@ -38,7 +38,7 @@ exports.createStudent = async (req, res) => {
 exports.getAllStudents = async (req, res) => {
     try {
         const filter = {};
-        const { name, fathername, mothername, studentMob, parentsMob, session, enrollment, course } = req.query;
+        const { name, fathername, mothername, studentMob, parentsMob, session, enrollment, course, aadharcard } = req.query;
 
         if (name) filter.name = { $regex: name, $options: 'i' };
         if (fathername) filter.fathername = { $regex: fathername, $options: 'i' };
@@ -48,6 +48,7 @@ exports.getAllStudents = async (req, res) => {
         if (session) filter.session = session;
         if (enrollment) filter.enrollment = { $regex: enrollment, $options: 'i' };
         if (course) filter.course = { $regex: course, $options: 'i' };
+        if (aadharcard) filter.aadharcard = { $regex: aadharcard, $options: 'i' };
 
         const students = await Student.find(filter).sort({ createdAt: -1 });
         res.status(200).json({
