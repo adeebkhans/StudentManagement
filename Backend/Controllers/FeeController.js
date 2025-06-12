@@ -235,13 +235,24 @@ exports.deleteFee = async (req, res) => {
 // Export all fee records to Excel
 exports.exportFees = async (req, res) => {
     try {
-        const fees = await Fee.find().populate('student');
+        // Fetch and sort fees by student name (case-insensitive)
+        const fees = await Fee.find()
+            .populate('student')
+            .lean();
+
+        // Sort fees by student name alphabetically
+        fees.sort((a, b) => {
+            const nameA = (a.student?.name || "").toLowerCase();
+            const nameB = (b.student?.name || "").toLowerCase();
+            return nameA.localeCompare(nameB);
+        });
 
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Fees');
 
-        // Define columns
+        // Define columns with S.No
         worksheet.columns = [
+            { header: "S.No", key: "sno", width: 8 },
             { header: "Student Name", key: "studentName", width: 20 },
             { header: "Father's Name", key: "fatherName", width: 20 },
             { header: "Enrollment", key: "enrollment", width: 18 },
@@ -252,9 +263,10 @@ exports.exportFees = async (req, res) => {
             { header: "updatedAt", key: "updatedAt", width: 22 },
         ];
 
-        // Add rows
-        fees.forEach(fee => {
+        // Add rows with S.No
+        fees.forEach((fee, idx) => {
             worksheet.addRow({
+                sno: idx + 1,
                 studentName: fee.student?.name || "N/A",
                 fatherName: fee.student?.fathername || "N/A",
                 enrollment: fee.student?.enrollment || "N/A",
