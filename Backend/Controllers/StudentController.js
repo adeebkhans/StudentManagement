@@ -34,11 +34,22 @@ exports.createStudent = async (req, res) => {
     }
 };
 
-// Get all students
+// Get all students with filter options
 exports.getAllStudents = async (req, res) => {
     try {
-        const students = await Student.find()
-        .sort({ createdAt: -1 });
+        const filter = {};
+        const { name, fathername, mothername, studentMob, parentsMob, session, enrollment, course } = req.query;
+
+        if (name) filter.name = { $regex: name, $options: 'i' };
+        if (fathername) filter.fathername = { $regex: fathername, $options: 'i' };
+        if (mothername) filter.mothername = { $regex: mothername, $options: 'i' };
+        if (studentMob) filter.studentMob = { $regex: studentMob, $options: 'i' };
+        if (parentsMob) filter.parentsMob = { $regex: parentsMob, $options: 'i' };
+        if (session) filter.session = session;
+        if (enrollment) filter.enrollment = { $regex: enrollment, $options: 'i' };
+        if (course) filter.course = { $regex: course, $options: 'i' };
+
+        const students = await Student.find(filter).sort({ createdAt: -1 });
         res.status(200).json({
             success: true,
             message: "Students fetched successfully",
