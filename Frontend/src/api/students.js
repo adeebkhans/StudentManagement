@@ -30,10 +30,11 @@ export const addStudent = async (studentData) => {
   return res.data;
 };
 
-// Get all students
-export const getAllStudents = async () => {
+// Get all students with optional query params
+export const getAllStudents = async (query = {}) => {
+  const params = new URLSearchParams(query).toString();
   const res = await axios.get(
-    `${BASE_URL}/students`,
+    `${BASE_URL}/students${params ? `?${params}` : ""}`,
     { headers: { ...getAuthHeader() } }
   );
   return res.data;
