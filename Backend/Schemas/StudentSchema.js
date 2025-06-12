@@ -47,10 +47,16 @@ const StudentSchema = new mongoose.Schema({
         required: false
     },
 
+    session:{
+        type: String,
+        required: true
+    },
+
     course:{
         type: String,
         required: false,
     }
+
 });
 
 module.exports = mongoose.model('Student', StudentSchema);
