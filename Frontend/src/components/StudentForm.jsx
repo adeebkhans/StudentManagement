@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
 
+const sessionOptions = [
+  "2024-2025",
+  "2025-2026",
+  "2026-2027",
+  "2027-2028",
+];
+
 const emptyForm = {
   name: "",
   fathername: "",
@@ -9,6 +16,7 @@ const emptyForm = {
   aadharcard: "",
   enrollment: "",
   course: "",
+  session: "",
 };
 
 const StudentForm = ({ onSubmit, initialData, loading }) => {
@@ -27,6 +35,7 @@ const StudentForm = ({ onSubmit, initialData, loading }) => {
             aadharcard: initialData.aadharcard || "",
             enrollment: initialData.enrollment || "",
             course: initialData.course || "",
+            session: initialData.session || "",
           }
         : emptyForm
     );
@@ -112,6 +121,21 @@ const StudentForm = ({ onSubmit, initialData, loading }) => {
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
           />
+          {/* Session Dropdown */}
+          <select
+            name="session"
+            value={form.session}
+            onChange={handleChange}
+            className="w-full border px-3 py-2 rounded"
+            required
+          >
+            <option value="">Select Session</option>
+            {sessionOptions.map((session) => (
+              <option key={session} value={session}>
+                {session}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
       <div className="mt-6 flex justify-end">

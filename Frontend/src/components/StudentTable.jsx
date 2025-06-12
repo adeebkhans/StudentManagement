@@ -16,6 +16,7 @@ const StudentTable = ({ students, onUpdate, readOnly }) => {
             <th className="px-4 py-2 border">Student Mob</th>
             <th className="px-4 py-2 border">Parents Mob</th>
             <th className="px-4 py-2 border">Enrollment</th>
+            <th className="px-4 py-2 border">Session</th>
             <th className="px-4 py-2 border">Aadhaar No.</th>
             <th className="px-4 py-2 border text-center">Aadhaar</th>
             <th className="px-4 py-2 border">Actions</th>
@@ -24,7 +25,7 @@ const StudentTable = ({ students, onUpdate, readOnly }) => {
         <tbody>
           {students.length === 0 ? (
             <tr>
-              <td colSpan={10} className="text-center py-4">
+              <td colSpan={11} className="text-center py-4">
                 No students found.
               </td>
             </tr>
@@ -38,6 +39,7 @@ const StudentTable = ({ students, onUpdate, readOnly }) => {
                 <td className="px-4 py-2 border">{student.studentMob}</td>
                 <td className="px-4 py-2 border">{student.parentsMob}</td>
                 <td className="px-4 py-2 border">{student.enrollment}</td>
+                <td className="px-4 py-2 border">{student.session || "N/A"}</td>
                 <td className="px-4 py-2 border text-center">
                   {student.aadharcard || (
                     <span className="text-gray-400">N/A</span>
