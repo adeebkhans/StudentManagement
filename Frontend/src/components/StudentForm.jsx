@@ -47,6 +47,19 @@ const StudentForm = ({ onSubmit, initialData, loading }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // Validate phone numbers and Aadhaar
+    if (!/^\d{10}$/.test(form.studentMob)) {
+      alert("Student Mobile must be exactly 10 digits.");
+      return;
+    }
+    if (!/^\d{10}$/.test(form.parentsMob)) {
+      alert("Parents Mobile must be exactly 10 digits.");
+      return;
+    }
+    if (!/^\d{12}$/.test(form.aadharcard)) {
+      alert("Aadhar Card Number must be exactly 12 digits.");
+      return;
+    }
     onSubmit(form);
   };
 
@@ -88,6 +101,10 @@ const StudentForm = ({ onSubmit, initialData, loading }) => {
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
             required
+            pattern="\d{10}"
+            maxLength={10}
+            minLength={10}
+            title="Enter a 10-digit mobile number"
           />
         </div>
         <div className="space-y-4">
@@ -98,6 +115,10 @@ const StudentForm = ({ onSubmit, initialData, loading }) => {
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
             required
+            pattern="\d{10}"
+            maxLength={10}
+            minLength={10}
+            title="Enter a 10-digit mobile number"
           />
           <input
             name="aadharcard"
@@ -106,6 +127,10 @@ const StudentForm = ({ onSubmit, initialData, loading }) => {
             onChange={handleChange}
             className="w-full border px-3 py-2 rounded"
             required
+            pattern="\d{12}"
+            maxLength={12}
+            minLength={12}
+            title="Enter a 12-digit Aadhaar number"
           />
           <input
             name="enrollment"

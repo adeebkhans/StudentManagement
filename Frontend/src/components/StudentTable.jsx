@@ -51,13 +51,13 @@ const StudentTable = ({ students, onUpdate, readOnly }) => {
                       href={student.aadharImage.secure_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 underline"
+                      className="text-blue-600 underline cursor-pointer"
                     >
                       View Aadhaar
                     </a>
                   ) : (
                     <button
-                      className="text-blue-600 underline"
+                      className="text-red-600 underline cursor-pointer"
                       onClick={() => navigate(`/aadhaar-upload/${student._id}`)}
                     >
                       Upload Aadhaar
@@ -68,14 +68,14 @@ const StudentTable = ({ students, onUpdate, readOnly }) => {
                   <div className="flex gap-2 justify-center">
                     {!readOnly && (
                       <button
-                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition"
+                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 transition cursor-pointer"
                         onClick={() => onUpdate(student)}
                       >
                         Update
                       </button>
                     )}
                     <button
-                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition"
+                      className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 transition cursor-pointer"
                       onClick={() => navigate(`/student/${student._id}`)}
                     >
                       View
