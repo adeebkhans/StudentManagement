@@ -6,10 +6,10 @@ const ExcelJS = require('exceljs');
 // Create a new student
 exports.createStudent = async (req, res) => {
     try {
-        const { name, fathername, mothername, studentMob, parentsMob } = req.body;
+        const { name, fathername, mothername, studentMob, parentsMob, session } = req.body;
 
         // Basic validation
-        if (!name || !fathername || !mothername || !studentMob || !parentsMob) {
+        if (!name || !fathername || !mothername || !studentMob || !parentsMob || !session) {
             return res.status(400).json({
                 success: false,
                 message: "Missing required fields",
@@ -34,10 +34,23 @@ exports.createStudent = async (req, res) => {
     }
 };
 
-// Get all students
+// Get all students with filter options
 exports.getAllStudents = async (req, res) => {
     try {
-        const students = await Student.find();
+        const filter = {};
+        const { name, fathername, mothername, studentMob, parentsMob, session, enrollment, course, aadharcard } = req.query;
+
+        if (name) filter.name = { $regex: name, $options: 'i' };
+        if (fathername) filter.fathername = { $regex: fathername, $options: 'i' };
+        if (mothername) filter.mothername = { $regex: mothername, $options: 'i' };
+        if (studentMob) filter.studentMob = { $regex: studentMob, $options: 'i' };
+        if (parentsMob) filter.parentsMob = { $regex: parentsMob, $options: 'i' };
+        if (session) filter.session = session;
+        if (enrollment) filter.enrollment = { $regex: enrollment, $options: 'i' };
+        if (course) filter.course = { $regex: course, $options: 'i' };
+        if (aadharcard) filter.aadharcard = { $regex: aadharcard, $options: 'i' };
+
+        const students = await Student.find(filter).sort({ createdAt: -1 });
         res.status(200).json({
             success: true,
             message: "Students fetched successfully",
@@ -258,13 +271,15 @@ exports.uploadAadhaar = async (req, res) => {
 // Export all students to Excel
 exports.exportStudents = async (req, res) => {
     try {
-        const students = await Student.find();
+        // Sort students alphabetically by name
+        const students = await Student.find().sort({ name: 1 });
 
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Students');
 
-        // Define columns
+        // Define columns with S.No.
         worksheet.columns = [
+            { header: 'S.No.', key: 'sno', width: 8 },
             { header: 'Name', key: 'name', width: 20 },
             { header: 'Father Name', key: 'fathername', width: 20 },
             { header: 'Mother Name', key: 'mothername', width: 20 },
@@ -276,12 +291,13 @@ exports.exportStudents = async (req, res) => {
             { header: 'Course', key: 'course', width: 20 },
         ];
 
-        // Add rows
-        students.forEach(student => {
+        // Add rows with S.No.
+        students.forEach((student, idx) => {
             const aadhaarUrl = student.aadharImage && student.aadharImage.secure_url
                 ? student.aadharImage.secure_url
                 : null;
             const row = worksheet.addRow({
+                sno: idx + 1,
                 name: student.name,
                 fathername: student.fathername,
                 mothername: student.mothername,
@@ -299,7 +315,6 @@ exports.exportStudents = async (req, res) => {
                     text: 'View Aadhaar',
                     hyperlink: aadhaarUrl
                 };
-                // Optional: style hyperlink
                 row.getCell('aadharImage').font = { color: { argb: 'FF0000FF' }, underline: true };
             }
         });

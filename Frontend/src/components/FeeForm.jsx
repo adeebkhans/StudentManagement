@@ -3,9 +3,16 @@ import { createFee } from "../api/fees";
 import { toast } from "react-toastify";
 
 const feeOptions = [
-  { code: "A", label: "A (₹180,000)", amount: 180000 },
-  { code: "B", label: "B (₹175,000)", amount: 175000 },
-  { code: "C", label: "C (₹170,000)", amount: 170000 },
+  { code: "A", label: "A", amount: 180000 },
+  { code: "B", label: "B", amount: 175000 },
+  { code: "C", label: "C", amount: 170000 },
+];
+
+const sessionOptions = [
+  "2024-2025",
+  "2025-2026",
+  "2026-2027",
+  "2027-2028",
 ];
 
 const FeeForm = ({ student, onSuccess, onCancel }) => {
@@ -13,6 +20,7 @@ const FeeForm = ({ student, onSuccess, onCancel }) => {
     code: "",
     fee: "",
     deposited: "",
+    session: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -40,9 +48,10 @@ const FeeForm = ({ student, onSuccess, onCancel }) => {
         code: form.code,
         fee: Number(form.fee),
         deposited: Number(form.deposited),
+        session: form.session,
       });
       toast.success("Fee record created!");
-      setForm({ code: "", fee: "", deposited: "" });
+      setForm({ code: "", fee: "", deposited: "", session: "" });
       if (onSuccess) onSuccess();
     } catch (err) {
       toast.error(err?.response?.data?.message || "Failed to create fee record");
@@ -74,19 +83,25 @@ const FeeForm = ({ student, onSuccess, onCancel }) => {
           ))}
         </select>
       </div>
+      {/* Session Dropdown */}
       <div className="mb-4">
-        <label className="block mb-1 font-medium">Total Fee</label>
-        <input
-          name="fee"
-          type="number"
-          value={form.fee}
+        <label className="block mb-1 font-medium">Session</label>
+        <select
+          name="session"
+          value={form.session}
           onChange={handleChange}
           className="w-full border px-3 py-2 rounded"
           required
-          min={0}
-          readOnly // Make it readonly since it's autofilled
-        />
+        >
+          <option value="">Select Session</option>
+          {sessionOptions.map((session) => (
+            <option key={session} value={session}>
+              {session}
+            </option>
+          ))}
+        </select>
       </div>
+      {/* Total Fee is hidden from user */}
       <div className="mb-4">
         <label className="block mb-1 font-medium">Deposited</label>
         <input
