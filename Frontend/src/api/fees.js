@@ -30,10 +30,11 @@ export const createFee = async (feeData) => {
   return res.data;
 };
 
-// Get all fee records
-export const getAllFees = async () => {
+// Get all fee records with optional query params
+export const getAllFees = async (query = {}) => {
+  const params = new URLSearchParams(query).toString();
   const res = await axios.get(
-    `${BASE_URL}/fees`,
+    `${BASE_URL}/fees${params ? `?${params}` : ""}`,
     { headers: { ...getAuthHeader() } }
   );
   return res.data;
@@ -76,23 +77,27 @@ export const deleteFee = async (id) => {
   return res.data;
 };
 
-// Get all students with no fee records
-export const getNewStudentsWithNoFeeRecords = async () => {
+// Get all students with no fee records, with optional query params
+export const getNewStudentsWithNoFeeRecords = async (query = {}) => {
+  const params = new URLSearchParams(query).toString();
   const res = await axios.get(
-    `${BASE_URL}/fees/newstudents`,
+    `${BASE_URL}/fees/newstudents${params ? `?${params}` : ""}`,
     { headers: { ...getAuthHeader() } }
   );
   return res.data;
 };
 
-// Export fees to Excel
-export const exportFees = async () => {
-  const res = await axios.get(
-    `${BASE_URL}/fees/export`,
+// Export fees to Excel with optional query params
+export const exportFees = async (query = {}) => {
+  const params = new URLSearchParams(query).toString();
+  return await axios.get(
+    `${BASE_URL}/fees/export${params ? `?${params}` : ""}`,
     {
       headers: { ...getAuthHeader() },
       responseType: "blob"
     }
   );
-  return res.data; // This will be a Blob (Excel file)
+    // return res.data; // This will be a Blob (Excel file) 
+    // but we are retuning whole to send headers for dynamic file name
+
 };
