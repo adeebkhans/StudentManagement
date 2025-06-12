@@ -95,7 +95,7 @@ const Students = () => {
         return (
             <div className="min-h-screen bg-gray-100 w-full">
                 <Navbar />
-                <div className="py-8 px-2 sm:px-6 w-full max-w-7xl mx-auto">
+                <div className="py-8 px-2 sm:px-6 w-full max-w-screen-2xl mx-auto">
                     <h1 className="text-2xl font-bold mb-8 text-center">Student Management</h1>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
                         <div
@@ -173,7 +173,7 @@ const Students = () => {
         return (
             <div className="min-h-screen bg-gray-100 w-full">
                 <Navbar />
-                <div className="py-8 px-2 sm:px-6 w-full max-w-7xl mx-auto">
+                <div className="py-8 px-2 sm:px-6 w-full max-w-screen-2xl mx-auto">
                     <h1 className="text-2xl font-bold mb-6">
                         {editingStudent ? "Update Student" : "Update Students"}
                     </h1>
@@ -226,7 +226,7 @@ const Students = () => {
         return (
             <div className="min-h-screen bg-gray-100 w-full">
                 <Navbar />
-                <div className="py-8 px-2 sm:px-6 w-full max-w-7xl mx-auto">
+                <div className="py-8 px-2 sm:px-6 w-full max-w-screen-2xl mx-auto">
                     <h1 className="text-2xl font-bold mb-6">All Students</h1>
                     <div className="mb-4 flex justify-between items-center">
                         <button
