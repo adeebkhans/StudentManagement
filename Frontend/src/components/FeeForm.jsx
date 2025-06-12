@@ -8,11 +8,19 @@ const feeOptions = [
   { code: "C", label: "C", amount: 170000 },
 ];
 
+const sessionOptions = [
+  "2024-2025",
+  "2025-2026",
+  "2026-2027",
+  "2027-2028",
+];
+
 const FeeForm = ({ student, onSuccess, onCancel }) => {
   const [form, setForm] = useState({
     code: "",
     fee: "",
     deposited: "",
+    session: "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -40,9 +48,10 @@ const FeeForm = ({ student, onSuccess, onCancel }) => {
         code: form.code,
         fee: Number(form.fee),
         deposited: Number(form.deposited),
+        session: form.session,
       });
       toast.success("Fee record created!");
-      setForm({ code: "", fee: "", deposited: "" });
+      setForm({ code: "", fee: "", deposited: "", session: "" });
       if (onSuccess) onSuccess();
     } catch (err) {
       toast.error(err?.response?.data?.message || "Failed to create fee record");
@@ -70,6 +79,24 @@ const FeeForm = ({ student, onSuccess, onCancel }) => {
           {feeOptions.map((opt) => (
             <option key={opt.code} value={opt.code}>
               {opt.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      {/* Session Dropdown */}
+      <div className="mb-4">
+        <label className="block mb-1 font-medium">Session</label>
+        <select
+          name="session"
+          value={form.session}
+          onChange={handleChange}
+          className="w-full border px-3 py-2 rounded"
+          required
+        >
+          <option value="">Select Session</option>
+          {sessionOptions.map((session) => (
+            <option key={session} value={session}>
+              {session}
             </option>
           ))}
         </select>

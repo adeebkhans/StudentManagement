@@ -10,6 +10,7 @@ const FeeTable = ({ fees, onAction }) => (
           <th className="px-4 py-2 border">Father's Name</th>
           <th className="px-4 py-2 border">Enrollment</th>
           <th className="px-4 py-2 border">Fee Code</th>
+          <th className="px-4 py-2 border">Session</th>
           <th className="px-4 py-2 border">Total Fee</th>
           <th className="px-4 py-2 border">Deposited</th>
           <th className="px-4 py-2 border">Remaining</th>
@@ -19,7 +20,7 @@ const FeeTable = ({ fees, onAction }) => (
       <tbody>
         {fees.length === 0 ? (
           <tr>
-            <td colSpan={onAction ? 8 : 7} className="text-center py-4">
+            <td colSpan={onAction ? 10 : 9} className="text-center py-4">
               No fee records found.
             </td>
           </tr>
@@ -31,6 +32,7 @@ const FeeTable = ({ fees, onAction }) => (
               <td className="px-4 py-2 border">{fee.student?.fathername || "N/A"}</td>
               <td className="px-4 py-2 border">{fee.student?.enrollment || "N/A"}</td>
               <td className="px-4 py-2 border">{fee.code || "N/A"}</td>
+              <td className="px-4 py-2 border">{fee.session || "N/A"}</td>
               <td className="px-4 py-2 border">{fee.fee ?? "N/A"}</td>
               <td className="px-4 py-2 border">{fee.deposited ?? "N/A"}</td>
               <td className="px-4 py-2 border">
