@@ -3,6 +3,7 @@ import { getAllStudents, addStudent, updateStudent, exportStudents } from "../ap
 import Navbar from "../components/Navbar";
 import StudentTable from "../components/StudentTable";
 import StudentForm from "../components/StudentForm";
+import SearchStudents from "../components/SearchStudents";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -194,13 +195,30 @@ const Students = () => {
                             </>
                         ) : (
                             <>
-                                <div className="mb-4 flex justify-between items-center">
+                                <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                                     <button
                                         className="bg-gray-300 text-gray-800 px-4 py-2 rounded font-semibold hover:bg-gray-400 transition"
                                         onClick={() => setMode("")}
                                     >
                                         Back
                                     </button>
+                                    <div className="w-full md:w-auto">
+                                        <SearchStudents
+                                            onSearch={async (params) => {
+                                                setLoading(true);
+                                                setError("");
+                                                try {
+                                                    const res = await getAllStudents(params);
+                                                    setStudents(res.data || []);
+                                                } catch (err) {
+                                                    setError(err?.response?.data?.message || "Failed to fetch students");
+                                                    toast.error(err?.response?.data?.message || "Failed to fetch students");
+                                                } finally {
+                                                    setLoading(false);
+                                                }
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                                 <div className="bg-white rounded shadow p-4 overflow-x-auto">
                                     <h2 className="text-xl font-semibold mb-4">All Students</h2>
@@ -228,13 +246,30 @@ const Students = () => {
                 <Navbar />
                 <div className="py-8 px-2 sm:px-6 w-full max-w-screen-2xl mx-auto">
                     <h1 className="text-2xl font-bold mb-6">All Students</h1>
-                    <div className="mb-4 flex justify-between items-center">
+                    <div className="mb-4 flex flex-col md:flex-row md:items-center md:justify-between gap-2">
                         <button
                             className="bg-gray-300 text-gray-800 px-4 py-2 rounded font-semibold hover:bg-gray-400 transition"
                             onClick={() => setMode("")}
                         >
                             Back
                         </button>
+                        <div className="w-full md:w-auto">
+                            <SearchStudents
+                                onSearch={async (params) => {
+                                    setLoading(true);
+                                    setError("");
+                                    try {
+                                        const res = await getAllStudents(params);
+                                        setStudents(res.data || []);
+                                    } catch (err) {
+                                        setError(err?.response?.data?.message || "Failed to fetch students");
+                                        toast.error(err?.response?.data?.message || "Failed to fetch students");
+                                    } finally {
+                                        setLoading(false);
+                                    }
+                                }}
+                            />
+                        </div>
                     </div>
                     <div className="bg-white rounded shadow p-4 overflow-x-auto">
                         {error && <div className="text-red-600 mb-4">{error}</div>}
