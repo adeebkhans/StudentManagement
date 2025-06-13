@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 
-const sessionOptions = [
-  "",
-  "2024-2025",
-  "2025-2026",
-  "2026-2027",
-  "2027-2028",
-];
+// Generate session options dynamically
+const sessionOptions = Array.from({ length: 10 }, (_, i) => {
+  // 2024-2026 then 2025-2027 so on..
+  const start = 2024 + i;
+  const end = start + 2;
+  return `${start}-${end}`;
+});
 
 const searchFields = [
   { value: "name", label: "Student Name" },
@@ -50,7 +50,7 @@ const SearchFee = ({ onSearch }) => {
         onChange={e => setSession(e.target.value)}
       >
         <option value="">All Sessions</option>
-        {sessionOptions.filter(s => s).map(opt => (
+        {sessionOptions.map(opt => (
           <option key={opt} value={opt}>{opt}</option>
         ))}
       </select>
