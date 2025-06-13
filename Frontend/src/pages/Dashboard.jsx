@@ -47,7 +47,7 @@ const Dashboard = () => {
             className="min-h-screen bg-gray-100 relative"
             style={{
                 backgroundImage:
-                    "url('https://lh4.googleusercontent.com/qdF9Bw3QcdQpo-wLt0Rr90wggSXMT13Fn5hZ7E77i8rVpXIVRs4Y8Z3jMigG116WABiL_LJeAEYpAZ3vGr6p6jwuuzW3lSFhTs3ZlfvxuJFYbD9gAT6DNS38zZtj1Z8LxEYima0_FT0=w16383')",
+                    "url('/background.jpeg')",
                 backgroundSize: "cover",
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
