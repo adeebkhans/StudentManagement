@@ -88,13 +88,20 @@ const AadhaarUpload = () => {
         {student && !(student.aadharImage && student.aadharImage.secure_url) && (
           <form onSubmit={handleUpload} className="bg-white rounded shadow p-6 flex flex-col items-center">
             <label className="block mb-2 font-medium w-full text-center">Upload Aadhaar Image</label>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="mb-4 w-full border rounded px-3 py-2"
-              style={{ maxWidth: 350 }}
-            />
+            <div className="flex items-center gap-3 mb-4 w-full justify-center">
+              <label className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded font-semibold cursor-pointer transition shadow">
+                Choose File
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </label>
+              <span className="text-gray-700 text-sm truncate max-w-xs">
+                {file ? file.name : <span className="text-gray-400">No file chosen</span>}
+              </span>
+            </div>
             <button
               type="submit"
               className={`w-full bg-gradient-to-r from-blue-500 to-blue-700 text-white px-4 py-2 rounded font-semibold shadow hover:from-blue-600 hover:to-blue-800 transition flex items-center justify-center ${

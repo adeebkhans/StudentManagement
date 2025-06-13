@@ -17,11 +17,11 @@ exports.createFee = async (req, res) => {
         }
 
         // Check if fee already exists for the same student and session
-        const existingFee = await Fee.findOne({ student, session });
+        const existingFee = await Fee.findOne({ student });
         if (existingFee) {
             return res.status(409).json({
                 success: false,
-                message: "Fee record already exists for this student and session. Use Update",
+                message: "Fee record already exists for this student and session. Please Use Update Endpoint",
                 data: null
             });
         }
@@ -164,22 +164,22 @@ exports.getNewStudentsWithNoFeeRecords = async (req, res) => {
             });
         }
 
-        // Fetch all students
-        const students = await StudentSchema.find();
+        // Find students who belong to the session
+        const studentsInSession = await StudentSchema.find({ session });
 
-        // Fetch all fee records for the given session
+        // Get all student IDs with a fee record for this session
         const fees = await Fee.find({ session }).select('student').lean();
-
-        // Extract student IDs from fee records
         const feeStudentIds = new Set(fees.map(fee => fee.student.toString()));
 
-        // Filter students who do not have any fee records for the given session
-        const newStudentsWithNoFees = students.filter(student => !feeStudentIds.has(student._id.toString()));
+        // Filter students who do not have a fee record for this session
+        const studentsWithoutFee = studentsInSession.filter(
+            student => !feeStudentIds.has(student._id.toString())
+        );
 
         res.status(200).json({
             success: true,
             message: "Students with no fee records for the session fetched successfully",
-            data: newStudentsWithNoFees
+            data: studentsWithoutFee
         });
     } catch (err) {
         console.error("Get new students with no fee records error:", err);
@@ -189,7 +189,7 @@ exports.getNewStudentsWithNoFeeRecords = async (req, res) => {
             data: null
         });
     }
-}
+};
 
 // Update a fee record by ID
 exports.updateFee = async (req, res) => {

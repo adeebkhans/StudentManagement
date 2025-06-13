@@ -271,8 +271,13 @@ exports.uploadAadhaar = async (req, res) => {
 // Export all students to Excel
 exports.exportStudents = async (req, res) => {
     try {
+        // Optional session filter
+        const { session } = req.query;
+        const filter = {};
+        if (session) filter.session = session;
+
         // Sort students alphabetically by name
-        const students = await Student.find().sort({ name: 1 });
+        const students = await Student.find(filter).sort({ name: 1 });
 
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Students');
@@ -326,7 +331,7 @@ exports.exportStudents = async (req, res) => {
         );
         res.setHeader(
             'Content-Disposition',
-            'attachment; filename=students.xlsx'
+            `attachment; filename=students${session ? '-' + session : ''}.xlsx`
         );
 
         // Write workbook to response
