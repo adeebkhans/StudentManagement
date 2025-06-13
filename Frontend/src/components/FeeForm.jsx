@@ -8,19 +8,19 @@ const feeOptions = [
   { code: "C", label: "C", amount: 170000 },
 ];
 
-const sessionOptions = [
-  "2024-2025",
-  "2025-2026",
-  "2026-2027",
-  "2027-2028",
-];
+// Generate session options dynamically
+const sessionOptions = Array.from({ length: 10 }, (_, i) => {
+  const start = 2024 + i;
+  const end = start + 2;
+  return `${start}-${end}`;
+});
 
-const FeeForm = ({ student, onSuccess, onCancel }) => {
+const FeeForm = ({ student, session, onSuccess, onCancel }) => {
   const [form, setForm] = useState({
     code: "",
     fee: "",
     deposited: "",
-    session: "",
+    session: session || "",
   });
   const [loading, setLoading] = useState(false);
 
@@ -86,20 +86,28 @@ const FeeForm = ({ student, onSuccess, onCancel }) => {
       {/* Session Dropdown */}
       <div className="mb-4">
         <label className="block mb-1 font-medium">Session</label>
-        <select
-          name="session"
-          value={form.session}
-          onChange={handleChange}
-          className="w-full border px-3 py-2 rounded"
-          required
-        >
-          <option value="">Select Session</option>
-          {sessionOptions.map((session) => (
-            <option key={session} value={session}>
-              {session}
-            </option>
-          ))}
-        </select>
+        {session ? (
+          <input
+            type="text"
+            value={session}
+            readOnly
+            className="w-full border px-3 py-2 rounded bg-gray-100 cursor-not-allowed"
+          />
+        ) : (
+          <select
+            className="w-full border px-3 py-2 rounded"
+            value={form.session}
+            onChange={(e) => setForm({ ...form, session: e.target.value })}
+            required
+          >
+            <option value="">Select Session</option>
+            {sessionOptions.map((opt) => (
+              <option key={opt} value={opt}>
+                {opt}
+              </option>
+            ))}
+          </select>
+        )}
       </div>
       {/* Total Fee is hidden from user */}
       <div className="mb-4">
