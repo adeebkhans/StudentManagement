@@ -86,13 +86,15 @@ export const uploadAadhaar = async (id, file) => {
 };
 
 // Export students to Excel
-export const exportStudents = async () => {
-  const res = await axios.get(
-    `${BASE_URL}/students/export`,
+export const exportStudents = async (query = {}) => {
+  const params = new URLSearchParams(query).toString();
+  // Return the full response, not just res.data, so headers are available
+  return await axios.get(
+    `${BASE_URL}/students/export${params ? `?${params}` : ""}`,
     {
       headers: { ...getAuthHeader() },
       responseType: "blob"
     }
   );
-  return res.data; // This will be a Blob (Excel file)
+    // return res.data; // This will be a Blob (Excel file)
 };
