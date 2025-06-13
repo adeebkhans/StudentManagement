@@ -8,12 +8,12 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import SearchFee from "../components/SearchFee";
 
-const sessionOptions = [
-  "2024-2025",
-  "2025-2026",
-  "2026-2027",
-  "2027-2028",
-];
+const sessionOptions = Array.from({ length: 10 }, (_, i) => {
+    // 2024-2026 then 2025-2027 so on.. 
+    const start = 2024 + i;
+    const end = start + 2;
+    return `${start}-${end}`;
+});
 
 const Fees = () => {
   const [view, setView] = useState(""); // "", "new", "existing"
@@ -228,6 +228,7 @@ const Fees = () => {
             {selectedStudent ? (
               <FeeForm
                 student={selectedStudent}
+                session={selectedStudent.session} // Pass session as prop
                 onSuccess={handleFeeFormSuccess}
                 onCancel={handleFeeFormCancel}
               />
