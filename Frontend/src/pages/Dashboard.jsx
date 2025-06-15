@@ -145,6 +145,46 @@ const Dashboard = () => {
                                 Export Fees
                             </button>
                         </div>
+                        {/* Results Card */}
+                        <div
+                            className="relative rounded-xl shadow-lg p-8 flex flex-col items-center cursor-pointer overflow-hidden group md:col-span-2"
+                            style={{
+                                background: "linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)",
+                            }}
+                            onClick={() => navigate("/result")}
+                        >
+                            {/* Decorative shapes */}
+                            <div className="absolute top-0 left-0 w-32 h-32 bg-white opacity-10 rounded-full -z-10 group-hover:scale-110 transition-transform duration-300" />
+                            <div className="absolute bottom-0 right-0 w-40 h-40 bg-white opacity-10 rounded-full -z-10 group-hover:scale-110 transition-transform duration-300" />
+                            <div className="flex items-center justify-center w-20 h-20 rounded-full bg-white shadow mb-4">
+                                <svg
+                                    className="w-12 h-12 text-purple-600"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    strokeWidth="2"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <div className="text-2xl font-bold text-white mb-2 drop-shadow">
+                                Results
+                            </div>
+                            <div className="text-purple-100 mb-4 text-center">
+                                Manage student results, add marks, view reports and track academic performance
+                            </div>
+                            <div className="flex gap-4">
+                                <button
+                                    className="bg-white text-purple-700 px-5 py-2 rounded font-semibold shadow hover:bg-purple-50 transition"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate("/result");
+                                    }}
+                                >
+                                    Manage Results
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
