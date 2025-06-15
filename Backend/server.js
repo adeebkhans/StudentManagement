@@ -29,6 +29,7 @@ app.get('/', (req, res) => {
 app.use('/api/v1/auth', require('./Routes/AuthRoutes'));
 app.use('/api/v1/students', require('./Routes/StudentRoutes'));
 app.use('/api/v1/fees', require('./Routes/FeeRoutes'));
+app.use('/api/v1/result', require('./Routes/ResultRoutes'));
 
 // Start server
 const PORT = process.env.PORT || 3009;
