@@ -51,3 +51,16 @@ export const getResultById = async (resultId) => {
   );
   return res.data;
 };
+
+// Export results as Excel (download file)
+export const exportResults = async (params = {}) => {
+  const query = new URLSearchParams(params).toString();
+  const response = await axios.get(
+    `${BASE_URL}/result/export${query ? `?${query}` : ""}`,
+    {
+      headers: { ...getAuthHeader() },
+      responseType: 'blob', // Important for file download
+    }
+  );
+  return response; // Return the full response object, not just response.data
+};
