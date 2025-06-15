@@ -231,7 +231,6 @@ async function exportResults(req, res) {
             select: "name enrollment"
         });
 
-        const ExcelJS = require('exceljs');
         const workbook = new ExcelJS.Workbook();
         const worksheet = workbook.addWorksheet('Results');
 
