@@ -9,6 +9,8 @@ import Fees from './pages/Fees';
 import FeeDetails from './pages/FeeDetails';
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Result from './pages/Result';
+import ResultDetails from './pages/ResultDetails';
 
 // Simple auth check (token in localStorage)
 const isAuthenticated = () => !!localStorage.getItem("token");
@@ -69,6 +71,22 @@ function App() {
             element={
               <ProtectedRoute>
                 <FeeDetails />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/result"
+            element={
+              <ProtectedRoute>
+                <Result />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/result/:studentId"
+            element={
+              <ProtectedRoute>
+                <ResultDetails />
               </ProtectedRoute>
             }
           />

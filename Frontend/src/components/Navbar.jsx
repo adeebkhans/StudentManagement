@@ -17,14 +17,17 @@ return (
                 <img src="/logo.png" alt="Logo" className="h-8 w-8 object-contain" />
                 <span>Student Management</span>
             </Link>
+            <Link to="/" className="text-white hover:underline">
+                Dashboard
+            </Link>
             <Link to="/students" className="text-white hover:underline">
                 Students
             </Link>
             <Link to="/fees" className="text-white hover:underline">
                 Fees
             </Link>
-            <Link to="/" className="text-white hover:underline">
-                Dashboard
+            <Link to="/result" className="text-white hover:underline">
+                Results
             </Link>
         </div>
         <button
