@@ -4,9 +4,10 @@ import Navbar from "../components/Navbar";
 import SearchStudents from "../components/SearchStudents";
 import SearchResult from "../components/SearchResult";
 import { getAllStudents } from "../api/students";
-import { getAllResults } from "../api/result";
+import { getAllResults, exportResults } from "../api/result";
 import ResultForm from "../components/ResultForm";
 import ResultTable from "../components/ResultTable";
+import { toast } from "react-toastify";
 
 const Result = () => {
   const navigate = useNavigate();
@@ -17,6 +18,7 @@ const Result = () => {
   const [allResults, setAllResults] = useState([]);
   const [loadingResults, setLoadingResults] = useState(false);
   const [resultSearchFilter, setResultSearchFilter] = useState({});
+  const [exporting, setExporting] = useState(false); // Add this state at the top of Result component
 
   // Handle search students
   const handleSearch = async (params) => {
@@ -63,6 +65,39 @@ const Result = () => {
   // Handle view result details
   const handleViewResult = (studentId) => {
     navigate(`/result/${studentId}`);
+  };
+
+  // Export Excel handler
+  const handleExportExcel = async () => {
+    setExporting(true);
+    try {
+      const response = await exportResults(resultSearchFilter);
+      let filename = "results.xlsx";
+      // Axios always lowercases header keys
+      const disposition = response?.headers?.['content-disposition'];
+      if (disposition) {
+        const match = disposition.match(/filename="?([^"]+)"?/);
+        if (match && match[1]) {
+          filename = match[1];
+        }
+      } else if (resultSearchFilter.session && resultSearchFilter.year) {
+        filename = `results_${resultSearchFilter.session}_${resultSearchFilter.year}.xlsx`;
+      }
+      const blob = response.data;
+      const url = window.URL.createObjectURL(new Blob([blob]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename);
+      document.body.appendChild(link);
+      link.click();
+      link.parentNode.removeChild(link);
+      toast.success("Exported result data!");
+    } catch (err) {
+      console.error("Failed to export result data:", err);
+      toast.error("Failed to export result data");
+    } finally {
+      setExporting(false);
+    }
   };
 
   // Main menu card
@@ -139,6 +174,13 @@ const Result = () => {
               </button>
               <div className="flex flex-row gap-2 items-center">
                 <SearchResult onSearch={handleSearchResults} />
+                <button
+                  className="bg-indigo-600 text-white px-6 py-2 rounded font-semibold hover:bg-indigo-700 transition"
+                  onClick={handleExportExcel}
+                  disabled={exporting}
+                >
+                  {exporting ? "Exporting..." : "Download Excel"}
+                </button>
               </div>
             </div>
             <div className="bg-white rounded shadow p-4 overflow-x-auto">
