@@ -9,7 +9,7 @@ const app = express();
 // Middleware
 
 app.use(cors({
-  origin: '*', 
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000', 
   exposedHeaders: ['Content-Disposition']
 }));
 
