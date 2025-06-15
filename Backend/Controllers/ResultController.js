@@ -1,4 +1,5 @@
 const Result = require("../Schemas/ResultSchema");
+const ExcelJS = require('exceljs');
 
 /**
  * Create or update a student's result for a session and year.
@@ -212,10 +213,205 @@ async function deleteResultById(req, res) {
     }
 }
 
+/**
+ * Export all results to Excel with the same format as ResultTable
+ * Supports query filters: session, year only
+ */
+async function exportResults(req, res) {
+    try {
+        const { session, year } = req.query;
+
+        // Build the query object
+        let query = {};
+        if (session) query.session = session;
+        if (year) query.year = year;
+
+        const results = await Result.find(query).populate({
+            path: "student",
+            select: "name enrollment"
+        });
+
+        const workbook = new ExcelJS.Workbook();
+        const worksheet = workbook.addWorksheet('Results');
+
+        // Define column headers
+        const headers = [
+            'S.No.',
+            'Student Name',
+            'Enrollment',
+            'Session',
+            'Year',
+            'Subject/Practical Name',
+            'CT1/75',
+            'CT1/5',
+            'CT2/75',
+            'CT2/5',
+            'Assignment',
+            'Extra Curricular',
+            'Attendance',
+            'Max Marks',
+            'Total Marks'
+        ];
+
+        worksheet.addRow(headers);
+
+        // Style header
+        const headerRow = worksheet.getRow(1);
+        headerRow.font = { bold: true };
+        headerRow.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true }; 
+        headerRow.fill = {
+            type: 'pattern',
+            pattern: 'solid',
+            fgColor: { argb: 'FFE0E0E0' }
+        };
+        headerRow.eachCell((cell) => {
+            cell.border = {
+                top: { style: 'thin' },
+                left: { style: 'thin' },
+                bottom: { style: 'thin' },
+                right: { style: 'thin' }
+            };
+        });
+
+        let rowIndex = 2;
+
+        results.forEach((result, resultIdx) => {
+            const allItems = [
+                ...(result.subjects || []).map(subject => ({
+                    type: 'subject',
+                    data: subject
+                })),
+                ...(result.practicals || []).map(practical => ({
+                    type: 'practical',
+                    data: practical
+                }))
+            ];
+
+            const startRow = rowIndex;
+
+            allItems.forEach((item, itemIdx) => {
+                const rowData = [];
+
+                if (itemIdx === 0) {
+                    rowData.push(
+                        resultIdx + 1,
+                        result.student?.name || '',
+                        result.student?.enrollment || '',
+                        result.session || '',
+                        result.year || ''
+                    );
+                } else {
+                    rowData.push('', '', '', '', '');
+                }
+
+                rowData.push(item.data?.name || '');
+
+                if (item.type === 'subject') {
+                    const ct1_75 = item.data?.marks?.ct1?.outOf75 ?? '';
+                    const ct1_5 = item.data?.marks?.ct1?.outOf5 ?? '';
+                    const ct2_75 = item.data?.marks?.ct2?.outOf75 ?? '';
+                    const ct2_5 = item.data?.marks?.ct2?.outOf5 ?? '';
+                    const assignment = item.data?.marks?.otherMarks?.assignment ?? '';
+                    const extraCurricular = item.data?.marks?.otherMarks?.extraCurricular ?? '';
+                    const attendance = item.data?.marks?.otherMarks?.attendance ?? '';
+
+                    const totalMarks =
+                        (ct1_5 || 0) +
+                        (ct2_5 || 0) +
+                        (assignment || 0) +
+                        (extraCurricular || 0) +
+                        (attendance || 0);
+
+                    rowData.push(
+                        ct1_75,
+                        ct1_5,
+                        ct2_75,
+                        ct2_5,
+                        assignment,
+                        extraCurricular,
+                        attendance,
+                        25,
+                        totalMarks
+                    );
+                } else if (item.type === 'practical') {
+                    rowData.push(
+                        '', '', '', '', '', '', '', // subject fields
+                        100,
+                        item.data?.marks ?? ''
+                    );
+                }
+
+                const row = worksheet.addRow(rowData);
+                row.eachCell((cell, colNumber) => {
+                    cell.border = {
+                        top: { style: 'thin' },
+                        left: { style: 'thin' },
+                        bottom: { style: 'thin' },
+                        right: { style: 'thin' }
+                    };
+                    // Vertically center for S.No., Student Name, Enrollment, Session, Year columns (1-5)
+                    if (colNumber >= 1 && colNumber <= 5) {
+                        cell.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                    }
+                });
+
+                rowIndex++;
+            });
+
+            // Merge cells after all rows for this result are added
+            if (allItems.length > 1) {
+                const endRow = rowIndex - 1;
+                worksheet.mergeCells(`A${startRow}:A${endRow}`);
+                worksheet.mergeCells(`B${startRow}:B${endRow}`);
+                worksheet.mergeCells(`C${startRow}:C${endRow}`);
+                worksheet.mergeCells(`D${startRow}:D${endRow}`);
+                worksheet.mergeCells(`E${startRow}:E${endRow}`);
+            }
+        });
+
+        // Auto-fit columns
+        worksheet.columns.forEach((column) => {
+            let maxLength = 0;
+            column.eachCell({ includeEmpty: true }, (cell) => {
+                const columnLength = cell.value ? cell.value.toString().length : 10;
+                if (columnLength > maxLength) maxLength = columnLength;
+            });
+            column.width = Math.min(maxLength + 2, 50);
+            // Set alignment only for columns after CT1/75 (i.e., columns 7 and onward)
+            if (column.number >= 7) {
+                column.alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+            }
+        });
+
+        res.setHeader(
+            'Content-Type',
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        );
+        // Set filename dynamically based on filters
+        let filename = 'results';
+        if (session) filename += `_${session}`;
+        if (year) filename += `_${year}`;
+        filename += '.xlsx';
+
+        res.setHeader(
+            'Content-Disposition',
+            `attachment; filename="${filename}"`
+        );
+
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (err) {
+        console.error("exportResults error:", err);
+        return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+}
+
+
 module.exports = {
     CreateUpdateResult,
     getResultsByStudentId,
     getResultById,
     getAllResults,
     deleteResultById,
+    exportResults,
 };
