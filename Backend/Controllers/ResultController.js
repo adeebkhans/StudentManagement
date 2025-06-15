@@ -395,7 +395,7 @@ async function exportResults(req, res) {
 
         res.setHeader(
             'Content-Disposition',
-            `attachment; filename=${filename}`
+            `attachment; filename="${filename}"`
         );
 
         await workbook.xlsx.write(res);
