@@ -82,10 +82,10 @@ resultSchema.pre("save", function(next) {
         this.subjects.forEach(subject => {
             if (subject.marks && subject.marks.ct1) {
                 // Round to nearest integer
-                subject.marks.ct1.outOf5 = Math.round(subject.marks.ct1.outOf75 / 15);
+                subject.marks.ct1.outOf5 = Math.round((subject.marks.ct1.outOf75 || 0) / 15);
             }
             if (subject.marks && subject.marks.ct2) {
-                subject.marks.ct2.outOf5 = Math.round(subject.marks.ct2.outOf75 / 15);
+                subject.marks.ct2.outOf5 = Math.round((subject.marks.ct2.outOf75 || 0) / 15);
             }
             // Calculate totalOutOf25: ct1.outOf5 + ct2.outOf5 + assignment + extraCurricular + attendance
             const ct1_5 = subject.marks?.ct1?.outOf5 || 0;
