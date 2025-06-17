@@ -21,6 +21,7 @@ const ResultForm = ({ studentId, session, onSuccess }) => {
   const [formSubjects, setFormSubjects] = useState([]);
   const [formPracticals, setFormPracticals] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [inputErrors, setInputErrors] = useState({});
 
   // Fetch and prefill result data when year changes
   useEffect(() => {
@@ -197,6 +198,16 @@ const ResultForm = ({ studentId, session, onSuccess }) => {
     }
   };
 
+  // Clamp helper
+  const clampWithError = (value, min, max) => {
+    if (value === "") return { value: "", error: false };
+    const num = Number(value);
+    if (isNaN(num)) return { value: min, error: true };
+    if (num < min) return { value: min, error: true };
+    if (num > max) return { value: max, error: true };
+    return { value: num, error: false };
+  };
+
   return (
     <form
       className="bg-white rounded shadow p-6 max-w-2xl mx-auto"
@@ -278,50 +289,109 @@ const ResultForm = ({ studentId, session, onSuccess }) => {
                         type="number"
                         min={0}
                         max={75}
-                        className="border px-2 py-1 rounded w-20"
+                        className={`border px-2 py-1 rounded w-20 ${inputErrors[`ct1-${idx}`] ? "border-red-500" : ""}`}
                         value={sub.marks.ct1.outOf75}
-                        onChange={e => handleSubjectMarksChange(idx, "ct1", e.target.value, "outOf75")}
+                        onChange={e => {
+                          const { value, error } = clampWithError(e.target.value, 0, 75);
+                          handleSubjectMarksChange(idx, "ct1", value, "outOf75");
+                          setInputErrors(prev => ({
+                            ...prev,
+                            [`ct1-${idx}`]: error
+                          }));
+                        }}
                       />
+                      {inputErrors[`ct1-${idx}`] && (
+                        <div className="text-xs text-red-500 mt-1">Value must be between 0 and 75</div>
+                      )}
                     </td>
                     <td className="border px-3 py-2">
                       <input
                         type="number"
                         min={0}
                         max={75}
-                        className="border px-2 py-1 rounded w-20"
+                        className={`border px-2 py-1 rounded w-20 ${inputErrors[`ct2-${idx}`] ? "border-red-500" : ""}`}
                         value={sub.marks.ct2.outOf75}
-                        onChange={e => handleSubjectMarksChange(idx, "ct2", e.target.value, "outOf75")}
+                        onChange={e => {
+                          const { value, error } = clampWithError(e.target.value, 0, 75);
+                          handleSubjectMarksChange(idx, "ct2", value, "outOf75");
+                          setInputErrors(prev => ({
+                            ...prev,
+                            [`ct2-${idx}`]: error
+                          }));
+                        }}
                       />
+                      {inputErrors[`ct2-${idx}`] && (
+                        <div className="text-xs text-red-500 mt-1">Value must be between 0 and 75</div>
+                      )}
                     </td>
                     <td className="border px-3 py-2">
                       <input
                         type="number"
                         min={0}
                         max={5}
-                        className="border px-2 py-1 rounded w-16"
+                        className={`border px-2 py-1 rounded w-16 ${inputErrors[`assignment-${idx}`] ? "border-red-500" : ""}`}
                         value={sub.marks.otherMarks.assignment}
-                        onChange={e => handleSubjectMarksChange(idx, "otherMarks", { ...sub.marks.otherMarks, assignment: e.target.value })}
+                        onChange={e => {
+                          const { value, error } = clampWithError(e.target.value, 0, 5);
+                          handleSubjectMarksChange(idx, "otherMarks", {
+                            ...sub.marks.otherMarks,
+                            assignment: value,
+                          });
+                          setInputErrors(prev => ({
+                            ...prev,
+                            [`assignment-${idx}`]: error
+                          }));
+                        }}
                       />
+                      {inputErrors[`assignment-${idx}`] && (
+                        <div className="text-xs text-red-500 mt-1">Value must be between 0 and 5</div>
+                      )}
                     </td>
                     <td className="border px-3 py-2">
                       <input
                         type="number"
                         min={0}
                         max={5}
-                        className="border px-2 py-1 rounded w-16"
+                        className={`border px-2 py-1 rounded w-16 ${inputErrors[`extraCurricular-${idx}`] ? "border-red-500" : ""}`}
                         value={sub.marks.otherMarks.extraCurricular}
-                        onChange={e => handleSubjectMarksChange(idx, "otherMarks", { ...sub.marks.otherMarks, extraCurricular: e.target.value })}
+                        onChange={e => {
+                          const { value, error } = clampWithError(e.target.value, 0, 5);
+                          handleSubjectMarksChange(idx, "otherMarks", {
+                            ...sub.marks.otherMarks,
+                            extraCurricular: value,
+                          });
+                          setInputErrors(prev => ({
+                            ...prev,
+                            [`extraCurricular-${idx}`]: error
+                          }));
+                        }}
                       />
+                      {inputErrors[`extraCurricular-${idx}`] && (
+                        <div className="text-xs text-red-500 mt-1">Value must be between 0 and 5</div>
+                      )}
                     </td>
                     <td className="border px-3 py-2">
                       <input
                         type="number"
                         min={0}
                         max={5}
-                        className="border px-2 py-1 rounded w-16"
+                        className={`border px-2 py-1 rounded w-16 ${inputErrors[`attendance-${idx}`] ? "border-red-500" : ""}`}
                         value={sub.marks.otherMarks.attendance}
-                        onChange={e => handleSubjectMarksChange(idx, "otherMarks", { ...sub.marks.otherMarks, attendance: e.target.value })}
+                        onChange={e => {
+                          const { value, error } = clampWithError(e.target.value, 0, 5);
+                          handleSubjectMarksChange(idx, "otherMarks", {
+                            ...sub.marks.otherMarks,
+                            attendance: value,
+                          });
+                          setInputErrors(prev => ({
+                            ...prev,
+                            [`attendance-${idx}`]: error
+                          }));
+                        }}
                       />
+                      {inputErrors[`attendance-${idx}`] && (
+                        <div className="text-xs text-red-500 mt-1">Value must be between 0 and 5</div>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -354,7 +424,12 @@ const ResultForm = ({ studentId, session, onSuccess }) => {
                         max={100}
                         className="border px-2 py-1 rounded w-24"
                         value={prac.marks}
-                        onChange={e => handlePracticalMarksChange(idx, e.target.value)}
+                        onChange={e =>
+                          handlePracticalMarksChange(
+                            idx,
+                            clampWithError(e.target.value, 0, 100).value
+                          )
+                        }
                       />
                     </td>
                   </tr>
