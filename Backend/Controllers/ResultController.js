@@ -406,6 +406,103 @@ async function exportResults(req, res) {
     }
 }
 
+/**
+ * Mass update or create results by subject/practical for multiple students.
+ * Expects an array of objects:
+ * [
+ *   {
+ *     student, session, year,
+ *     subject: { name, marks: { ct1, ct2, otherMarks } }
+ *     // or
+ *     practical: { name, marks }
+ *   },
+ *   ...
+ * ]
+ */
+async function updateResultBySubject(req, res) {
+    try {
+        const updates = req.body;
+        if (!Array.isArray(updates) || updates.length === 0) {
+            return res.status(400).json({ message: "Request body must be a non-empty array." });
+        }
+
+        const results = [];
+
+        for (const item of updates) {
+            const { student, session, year, subject, practical } = item;
+            if (!student || !session || !year || (!subject && !practical)) {
+                continue; // skip invalid entries
+            }
+
+            // Find or create the result doc
+            let result = await Result.findOne({ student, session, year });
+            if (!result) {
+                result = new Result({
+                    student,
+                    session,
+                    year,
+                    subjects: [],
+                    practicals: []
+                });
+            }
+
+            // Update or add subject
+            if (subject && subject.name) {
+                let existing = result.subjects.find(s => s.name === subject.name);
+                if (existing) {
+                    if (subject.marks?.ct1) {
+                        existing.marks.ct1 = {
+                            ...existing.marks.ct1,
+                            ...subject.marks.ct1
+                        };
+                    }
+                    if (subject.marks?.ct2) {
+                        existing.marks.ct2 = {
+                            ...existing.marks.ct2,
+                            ...subject.marks.ct2
+                        };
+                    }
+                    if (subject.marks?.otherMarks) {
+                        existing.marks.otherMarks = {
+                            ...existing.marks.otherMarks,
+                            ...subject.marks.otherMarks
+                        };
+                    }
+                } else {
+                    result.subjects.push({
+                        name: subject.name,
+                        marks: {
+                            ct1: subject.marks?.ct1 || {},
+                            ct2: subject.marks?.ct2 || {},
+                            otherMarks: subject.marks?.otherMarks || {}
+                        }
+                    });
+                }
+            }
+
+            // Update or add practical
+            if (practical && practical.name) {
+                let existing = result.practicals.find(p => p.name === practical.name);
+                if (existing) {
+                    if (typeof practical.marks === "number") existing.marks = practical.marks;
+                } else {
+                    result.practicals.push({
+                        name: practical.name,
+                        marks: practical.marks
+                    });
+                }
+            }
+
+            await result.save();
+            results.push(result);
+        }
+
+        return res.status(200).json({ message: "Results updated successfully" });
+    } catch (err) {
+        console.error("updateResultBySubject error:", err);
+        return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
+}
 
 module.exports = {
     CreateUpdateResult,
@@ -414,4 +511,5 @@ module.exports = {
     getAllResults,
     deleteResultById,
     exportResults,
+    updateResultBySubject,
 };
