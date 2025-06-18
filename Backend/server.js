@@ -19,8 +19,14 @@ app.use(express.urlencoded({ extended: true }));
 // MongoDB Connection
 const mongoURI = process.env.MONGODB_URI;
 mongoose.connect(mongoURI); 
-mongoose.connection.on('connected', () => {
+mongoose.connection.on('connected', async () => {
     console.log('MongoDB connected');
+    // Run seedManager on server startup
+    try {
+        await require('./Scripts/seedManager');
+    } catch (err) {
+        console.error('Error running seedManager:', err);
+    }
 });
 mongoose.connection.on('error', (err) => {
     console.error('MongoDB connection error:', err);
