@@ -25,7 +25,7 @@ export const addStudent = async (studentData) => {
   const res = await axios.post(
     `${BASE_URL}/students`,
     studentData,
-    { headers: { ...getAuthHeader() } }
+    { headers: { ...getAuthHeader() }, withCredentials: true }
   );
   return res.data;
 };
@@ -35,7 +35,7 @@ export const getAllStudents = async (query = {}) => {
   const params = new URLSearchParams(query).toString();
   const res = await axios.get(
     `${BASE_URL}/students${params ? `?${params}` : ""}`,
-    { headers: { ...getAuthHeader() } }
+    { headers: { ...getAuthHeader() }, withCredentials: true }
   );
   return res.data;
 };
@@ -44,7 +44,7 @@ export const getAllStudents = async (query = {}) => {
 export const getStudentById = async (id) => {
   const res = await axios.get(
     `${BASE_URL}/students/${id}`,
-    { headers: { ...getAuthHeader() } }
+    { headers: { ...getAuthHeader() }, withCredentials: true }
   );
   return res.data;
 };
@@ -54,7 +54,7 @@ export const updateStudent = async (id, studentData) => {
   const res = await axios.put(
     `${BASE_URL}/students/${id}`,
     studentData,
-    { headers: { ...getAuthHeader() } }
+    { headers: { ...getAuthHeader() }, withCredentials: true }
   );
   return res.data;
 };
@@ -63,7 +63,7 @@ export const updateStudent = async (id, studentData) => {
 export const deleteStudent = async (id) => {
   const res = await axios.delete(
     `${BASE_URL}/students/${id}`,
-    { headers: { ...getAuthHeader() } }
+    { headers: { ...getAuthHeader() }, withCredentials: true }
   );
   return res.data;
 };
@@ -79,7 +79,8 @@ export const uploadAadhaar = async (id, file) => {
       headers: {
         ...getAuthHeader(),
         "Content-Type": "multipart/form-data"
-      }
+      },
+      withCredentials: true
     }
   );
   return res.data;
@@ -93,7 +94,8 @@ export const exportStudents = async (query = {}) => {
     `${BASE_URL}/students/export${params ? `?${params}` : ""}`,
     {
       headers: { ...getAuthHeader() },
-      responseType: "blob"
+      responseType: "blob",
+      withCredentials: true
     }
   );
     // return res.data; // This will be a Blob (Excel file)
