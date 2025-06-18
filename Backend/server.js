@@ -9,8 +9,11 @@ const app = express();
 // Middleware
 
 app.use(cors({
-  origin: 'https://ssipadmin.vercel.app' || process.env.FRONTEND_URL || 'http://localhost:5173', 
-  exposedHeaders: ['Content-Disposition']
+  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  credentials: true,
+  exposedHeaders: ['Content-Disposition'],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "DELETE"],
 }));
 
 app.use(express.json());
