@@ -141,6 +141,17 @@ const Result = () => {
                 <div className="text-xl font-semibold text-white mb-2">See All Results</div>
                 <div className="text-blue-100 text-center">View all students' results in a table.</div>
               </div>
+              {/* New card for subjectwise update */}
+              <div
+                className="bg-gradient-to-br from-green-500 to-green-700 rounded-xl shadow-lg p-8 flex flex-col items-center cursor-pointer hover:scale-105 transition-all duration-200"
+                onClick={() => navigate("/result/subjects")}
+              >
+                <div className="text-4xl mb-3 text-white">
+                  <i className="fas fa-layer-group"></i>
+                </div>
+                <div className="text-xl font-semibold text-white mb-2">Update Result Subjectwise</div>
+                <div className="text-green-100 text-center">Mass update results for a subject or practical.</div>
+              </div>
             </div>
           </div>
         </div>
