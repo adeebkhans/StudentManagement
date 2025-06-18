@@ -15,15 +15,18 @@ const seedManager = async () => {
     return process.exit(1);
   }
 
+  const hashedPassword = await bcrypt.hash(plainPassword, 10);
   const existing = await Manager.findOne({ email });
+
   if (existing) {
-    console.log("Manager already exists.");
+    // Update password if manager exists
+    existing.password = hashedPassword;
+    await existing.save();
+    console.log("Manager password updated.");
     return process.exit();
   }
 
-  const hashedPassword = await bcrypt.hash(plainPassword, 10);
   await Manager.create({ email, password: hashedPassword });
-
   console.log("Default manager created.");
   process.exit();
 };
