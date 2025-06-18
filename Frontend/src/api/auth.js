@@ -4,7 +4,11 @@ const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3009/api
 
 // Login manager
 export const login = async (email, password) => {
-  const res = await axios.post(`${BASE_URL}/auth/login`, { email, password });
+  const res = await axios.post(
+    `${BASE_URL}/auth/login`,
+    { email, password },
+    { withCredentials: true }
+  );
   return res.data;
 };
 

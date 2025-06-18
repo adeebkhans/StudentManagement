@@ -13,7 +13,7 @@ export const createOrUpdateResult = async (resultData) => {
   const res = await axios.post(
     `${BASE_URL}/result`,
     resultData,
-    { headers: { ...getAuthHeader() } }
+    { headers: { ...getAuthHeader() }, withCredentials: true }
   );
   return res.data;
 };
@@ -27,7 +27,8 @@ export const getAllResults = async (params = {}) => {
             headers: { 
                 ...getAuthHeader(),
                 'Content-Type': 'application/json'
-            } 
+            },
+            withCredentials: true
         }
     );
     return res.data;
@@ -38,7 +39,7 @@ export const getResultsByStudentId = async (studentId, params = {}) => {
   const query = new URLSearchParams(params).toString();
   const res = await axios.get(
     `${BASE_URL}/result/student/${studentId}${query ? `?${query}` : ""}`,
-    { headers: { ...getAuthHeader() } }
+    { headers: { ...getAuthHeader() }, withCredentials: true }
   );
   return res.data;
 };
@@ -47,7 +48,7 @@ export const getResultsByStudentId = async (studentId, params = {}) => {
 export const getResultById = async (resultId) => {
   const res = await axios.get(
     `${BASE_URL}/result/${resultId}`,
-    { headers: { ...getAuthHeader() } }
+    { headers: { ...getAuthHeader() }, withCredentials: true }
   );
   return res.data;
 };
@@ -60,6 +61,7 @@ export const exportResults = async (params = {}) => {
     {
       headers: { ...getAuthHeader() },
       responseType: 'blob', // Important for file download
+      withCredentials: true
     }
   );
   return response; // Return the full response object, not just response.data
@@ -74,7 +76,8 @@ export const updateResultSubjectwise = async (payload) => {
       headers: {
         ...getAuthHeader(),
         'Content-Type': 'application/json'
-      }
+      },
+      withCredentials: true
     }
   );
   return res.data;
