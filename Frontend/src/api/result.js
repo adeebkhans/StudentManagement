@@ -64,3 +64,18 @@ export const exportResults = async (params = {}) => {
   );
   return response; // Return the full response object, not just response.data
 };
+
+// Update or create results for multiple students/subjects in mass
+export const updateResultSubjectwise = async (payload) => {
+  const res = await axios.post(
+    `${BASE_URL}/result/subjects`,
+    payload,
+    {
+      headers: {
+        ...getAuthHeader(),
+        'Content-Type': 'application/json'
+      }
+    }
+  );
+  return res.data;
+};
