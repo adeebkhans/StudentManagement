@@ -25,7 +25,7 @@ export const addStudent = async (studentData) => {
   const res = await axios.post(
     `${BASE_URL}/students`,
     studentData,
-    { headers: { ...getAuthHeader() }, withCredentials: true }
+    { headers: { ...getAuthHeader() },  }
   );
   return res.data;
 };
