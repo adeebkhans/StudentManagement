@@ -7,7 +7,6 @@ require('dotenv').config();
 const app = express();
 
 // Middleware
-
 app.use(cors({
   origin: process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true, 
@@ -22,15 +21,8 @@ app.use(express.urlencoded({ extended: true }));
 // MongoDB Connection
 const mongoURI = process.env.MONGODB_URI;
 mongoose.connect(mongoURI); 
-mongoose.connection.on('connected', async () => {
+mongoose.connection.on('connected', () => {
     console.log('MongoDB connected');
-    // Run seedManager on server startup
-    try {
-        const seedManager = require('./Scripts/seedManager');
-        await seedManager();
-    } catch (err) {
-        console.error('Error running seedManager:', err);
-    }
 });
 mongoose.connection.on('error', (err) => {
     console.error('MongoDB connection error:', err);
@@ -39,6 +31,18 @@ mongoose.connection.on('error', (err) => {
 // Basic route
 app.get('/', (req, res) => {
     res.send('Server is running');
+});
+
+// Manual seed route - only run when you want to seed
+app.post('/api/v1/seed', async (req, res) => {
+    try {
+        const seedManager = require('./Scripts/seedManager');
+        await seedManager();
+        res.json({ message: 'Seeding completed successfully' });
+    } catch (err) {
+        console.error('Error running seedManager:', err);
+        res.status(500).json({ error: 'Seeding failed', details: err.message });
+    }
 });
 
 app.use('/api/v1/auth', require('./Routes/AuthRoutes'));
@@ -50,4 +54,5 @@ app.use('/api/v1/result', require('./Routes/ResultRoutes'));
 const PORT = process.env.PORT || 3009;
 app.listen(PORT, () => {
     console.log(`Server started on port http://localhost:${PORT}`);
+    console.log(`To seed manager, make a POST request to: http://localhost:${PORT}/api/v1/seed`);
 });
