@@ -14,11 +14,12 @@ exports.login = async (req, res) => {
 
         const manager = await Manager.findOne({ email });
         if (!manager) {
-            return res.status(401).json({ message: "Invalid credentials" });
+            return res.status(401).json({ message: "Incorrect Email" });
         }
 
         const isMatch = await bcrypt.compare(password, manager.password);
         if (!isMatch) {
+            console.log(manager)
             return res.status(401).json({ message: "Invalid credentials" });
         }
 
