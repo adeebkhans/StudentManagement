@@ -1,6 +1,6 @@
 // Scripts/seedManager.js
 const bcrypt = require('bcrypt');
-const Manager = require('../Schemas/Manager'); 
+const Manager = require('../Schemas/Manager');
 
 const seedManager = async () => {
   try {
@@ -16,18 +16,22 @@ const seedManager = async () => {
     const existing = await Manager.findOne({ email });
 
     if (existing) {
-      // Update password if manager exists
-      existing.password = hashedPassword;
-      await existing.save();
-      console.log("Manager password updated.");
-      return;
+      if (await bcrypt.compare(plainPassword, existing.password)) {
+        console.log("Password is the same, skip updating.");
+        return;
+      }
+        // Update password if manager exists and pass is different
+        existing.password = hashedPassword;
+        await existing.save();
+        console.log("Manager password updated.");
+        return;
+      }
+
+      await Manager.create({ email, password: hashedPassword });
+      console.log("Default manager created.");
+    } catch (err) {
+      console.error("Error in seedManager:", err);
     }
+  };
 
-    await Manager.create({ email, password: hashedPassword });
-    console.log("Default manager created.");
-  } catch (err) {
-    console.error("Error in seedManager:", err);
-  }
-};
-
-module.exports = seedManager;
+  module.exports = seedManager;
