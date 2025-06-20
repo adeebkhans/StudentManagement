@@ -32,69 +32,116 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white p-8 rounded shadow-md w-full max-w-sm"
-      >
-        <h2 className="text-2xl font-bold mb-6 text-center">Manager Login</h2>
-        {error && (
-          <div className="mb-4 text-red-600 text-center">{error}</div>
-        )}
-        <div className="mb-4">
-          <label className="block mb-1 font-medium">Email</label>
-          <input
-            type="email"
-            className="w-full border rounded px-3 py-2"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            autoFocus
-          />
-        </div>
-        <div className="mb-6">
-          <label className="block mb-1 font-medium">Password</label>
-          <div className="relative">
-            <input
-              type={showPassword ? "text" : "password"}
-              className="w-full border rounded px-3 py-2 pr-10"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
+    <div
+      className="min-h-screen relative"
+      style={{
+        backgroundImage: "url('/background.jpeg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      {/* Overlay for better readability */}
+      <div className="absolute inset-0 bg-gray-900/40 pointer-events-none" />
+      
+      <div className="relative z-10 min-h-screen flex flex-col items-center justify-center px-4">
+        {/* Logo and Institute Name */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="bg-white/95 backdrop-blur-sm rounded-full p-4 shadow-lg mb-4">
+            <img
+              src="/logo.png"
+              alt="Logo"
+              className="h-20 w-20 object-contain"
             />
-            <button
-              type="button"
-              tabIndex={-1}
-              className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500"
-              onClick={() => setShowPassword((prev) => !prev)}
-              aria-label={showPassword ? "Hide password" : "Show password"}
-            >
-              {showPassword ? (
-                // Eye-off SVG
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-4.477-10-10 0-1.657.336-3.236.938-4.675M15 12a3 3 0 11-6 0 3 3 0 016 0zm6.062-4.675A9.956 9.956 0 0122 9c0 5.523-4.477 10-10 10a9.956 9.956 0 01-4.675-.938M3 3l18 18" />
-                </svg>
-              ) : (
-                // Eye SVG
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
-                  viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm7 0c0 5-4 9-10 9S2 17 2 12s4-9 10-9 10 4 10 9z" />
-                </svg>
-              )}
-            </button>
+          </div>
+          <div className="bg-white/20 backdrop-blur-sm rounded-lg p-6 shadow-lg">
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-bold text-center text-white leading-tight">
+              SHAIL SUBHASH INSTITUTE OF PARA MEDICAL SCIENCE
+            </h1>
           </div>
         </div>
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded font-semibold hover:bg-blue-700 transition"
-          disabled={loading}
-        >
-          {loading ? "Logging in..." : "Login"}
-        </button>
-      </form>
+
+        {/* Login Form */}
+        <div className="bg-white/95 backdrop-blur-sm p-8 rounded-xl shadow-xl w-full max-w-md">
+          <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">Manager Login</h2>
+          
+          {error && (
+            <div className="mb-4 p-3 bg-red-500/20 border border-red-400/30 text-red-100 rounded-lg text-center backdrop-blur-sm">
+              {error}
+            </div>
+          )}
+          
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <label className="block mb-2 font-medium text-gray-700">Email</label>
+              <input
+                type="email"
+                className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                autoFocus
+                placeholder="Enter your email"
+              />
+            </div>
+            
+            <div className="mb-6">
+              <label className="block mb-2 font-medium text-white">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  className="w-full border border-gray-300 rounded-lg px-4 py-3 pr-12 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  placeholder="Enter your password"
+                />
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  className="absolute inset-y-0 right-0 flex items-center px-4 text-gray-500 hover:text-gray-700 transition-colors"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    // Eye-off SVG
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+                      viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-4.477-10-10 0-1.657.336-3.236.938-4.675M15 12a3 3 0 11-6 0 3 3 0 016 0zm6.062-4.675A9.956 9.956 0 0122 9c0 5.523-4.477 10-10 10a9.956 9.956 0 01-4.675-.938M3 3l18 18" />
+                    </svg>
+                  ) : (
+                    // Eye SVG
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none"
+                      viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0zm7 0c0 5-4 9-10 9S2 17 2 12s4-9 10-9 10 4 10 9z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+            
+            <button
+              type="submit"
+              className="w-full bg-gradient-to-r from-blue-600/80 to-blue-700/80 backdrop-blur-sm text-white py-3 rounded-lg font-semibold hover:from-blue-700/90 hover:to-blue-800/90 focus:ring-4 focus:ring-blue-300/50 transition-all duration-200 shadow-lg"
+              disabled={loading}
+            >
+              {loading ? (
+                <div className="flex items-center justify-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                  Logging in...
+                </div>
+              ) : (
+                "Login"
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };
