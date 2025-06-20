@@ -62,10 +62,10 @@ const Dashboard = () => {
                         <img
                             src="/logo.png"
                             alt="Logo"
-                            className="h-22 w-22 object-contain mb-2"
+                            className="h-34 w-34 object-contain mb-2"
                         />
                         <h1 className="text-3xl font-bold text-center">
-                            Shail Subhash Institute of Para Medical Science
+                            SHAIL SUBHASH INSTITUTE OF PARA MEDICAL SCEINCE
                         </h1>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
